@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sampson Commercial — Apps</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Inter',sans-serif; background:#001A4C; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2rem; }
+
+.logo-wrap { display:flex; align-items:center; gap:16px; margin-bottom:3rem; }
+.logo-box { width:56px; height:56px; background:#265CFF; border-radius:12px; display:flex; align-items:center; justify-content:center; }
+.logo-box span { color:white; font-family:'Poppins',sans-serif; font-weight:700; font-size:20px; }
+.logo-text { }
+.logo-name { font-family:'Poppins',sans-serif; font-weight:700; font-size:22px; color:white; letter-spacing:0.02em; }
+.logo-sub { font-size:12px; color:rgba(255,255,255,0.45); letter-spacing:0.08em; text-transform:uppercase; margin-top:2px; }
+
+.apps { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; width:100%; max-width:720px; }
+
+.app-card { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:24px; text-decoration:none; transition:all 0.2s; display:flex; flex-direction:column; }
+.app-card:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.25); transform:translateY(-2px); }
+.app-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:14px; }
+.app-name { font-family:'Poppins',sans-serif; font-weight:600; font-size:15px; color:white; margin-bottom:6px; }
+.app-desc { font-size:12px; color:rgba(255,255,255,0.5); line-height:1.6; flex:1; }
+.app-arrow { font-size:12px; color:rgba(255,255,255,0.3); margin-top:14px; }
+.app-card:hover .app-arrow { color:#FF9E59; }
+
+.divider { width:100%; max-width:720px; height:1px; background:rgba(255,255,255,0.08); margin:2.5rem 0; }
+
+.client-section { width:100%; max-width:720px; }
+.client-label { font-size:11px; font-weight:600; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px; }
+.client-links { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.client-link { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:14px 16px; text-decoration:none; display:flex; align-items:center; justify-content:space-between; transition:all 0.15s; }
+.client-link:hover { background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.15); }
+.client-link-name { font-size:13px; font-weight:500; color:white; }
+.client-link-type { font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px; }
+.client-link-dot { width:8px; height:8px; border-radius:50%; background:#FF9E59; flex-shrink:0; }
+
+.footer { margin-top:3rem; font-size:11px; color:rgba(255,255,255,0.2); text-align:center; }
+
+@media(max-width:600px) { .apps { grid-template-columns:1fr; } .client-links { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<div class="logo-wrap">
+  <div class="logo-box"><span>SC</span></div>
+  <div class="logo-text">
+    <div class="logo-name">Sampson Commercial</div>
+    <div class="logo-sub">Internal Operations Platform</div>
+  </div>
+</div>
+
+<div class="apps">
+  <a class="app-card" href="deal-pipeline.html">
+    <div class="app-icon" style="background:rgba(38,92,255,0.2)">📊</div>
+    <div class="app-name">Deal Pipeline</div>
+    <div class="app-desc">Kanban board, commission tracker, stale deal alerts. Live Airtable sync.</div>
+    <div class="app-arrow">Open →</div>
+  </a>
+  <a class="app-card" href="admin-portal.html">
+    <div class="app-icon" style="background:rgba(255,158,89,0.2)">🏢</div>
+    <div class="app-name">Admin Portal</div>
+    <div class="app-desc">All properties, marketing stats, prospect pipeline, post updates.</div>
+    <div class="app-arrow">Open →</div>
+  </a>
+  <a class="app-card" href="prospecting.html">
+    <div class="app-icon" style="background:rgba(22,163,74,0.2)">📍</div>
+    <div class="app-name">Prospecting CRM</div>
+    <div class="app-desc">Owner outreach, 4-touch sequences, call queue. Florida & Puerto Rico.</div>
+    <div class="app-arrow">Coming soon</div>
+  </a>
+</div>
+
+<div class="divider"></div>
+
+<div class="client-section">
+  <div class="client-label">Client Portals</div>
+  <div class="client-links">
+    <a class="client-link" href="client-portal.html?client=exit24-dorado-2024">
+      <div>
+        <div class="client-link-name">Exit 24 — Dorado</div>
+        <div class="client-link-type">Retail Development</div>
+      </div>
+      <div class="client-link-dot" style="background:#265CFF"></div>
+    </a>
+    <a class="client-link" href="client-portal.html?client=ceiba-ferry-hms-2024">
+      <div>
+        <div class="client-link-name">Ceiba Ferry Terminal</div>
+        <div class="client-link-type">Retail Leasing</div>
+      </div>
+      <div class="client-link-dot" style="background:#FF9E59"></div>
+    </a>
+    <a class="client-link" href="client-portal.html?client=union-plaza-ed-2024">
+      <div>
+        <div class="client-link-name">Union Plaza</div>
+        <div class="client-link-type">Office Leasing</div>
+      </div>
+      <div class="client-link-dot" style="background:#16a34a"></div>
+    </a>
+    <a class="client-link" href="client-portal.html?client=canton-mall-bayamon-2024">
+      <div>
+        <div class="client-link-name">Canton Mall</div>
+        <div class="client-link-type">Retail Leasing</div>
+      </div>
+      <div class="client-link-dot" style="background:#8b5cf6"></div>
+    </a>
+  </div>
+</div>
+
+<div class="footer">Diego Sampson, CCIM · Sampson Commercial Real Estate · Florida & Puerto Rico</div>
+
+</body>
+</html>
