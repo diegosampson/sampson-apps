@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sampson Commercial — Client Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #001A4C; --blue: #265CFF; --orange: #FF9E59; --light: #EDF2F7;
+  --gray-100: #F7F9FC; --gray-200: #E8ECF2; --gray-500: #6B7A8D; --gray-700: #374151;
+  --green: #16a34a; --red: #dc2626; --font-head: 'Poppins',sans-serif; --font-body: 'Inter',sans-serif;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:var(--font-body); background:var(--gray-100); color:var(--gray-700); min-height:100vh; }
+
+.header { background:var(--navy); padding:1.5rem 2rem 1rem; }
+.header-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem; }
+.header-label { font-size:11px; font-weight:600; color:var(--orange); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+.header-client { font-family:var(--font-head); font-size:28px; font-weight:600; color:white; }
+.header-prepared { font-size:13px; color:rgba(255,255,255,0.55); margin-top:4px; }
+.header-contact { text-align:right; color:rgba(255,255,255,0.7); font-size:13px; line-height:1.8; }
+.header-contact strong { color:white; font-family:var(--font-head); font-size:14px; }
+
+.nav-bar { background:rgba(0,0,0,0.25); padding:0 2rem; display:flex; gap:2px; }
+.nav-btn { padding:10px 16px; font-size:13px; font-weight:500; color:rgba(255,255,255,0.6); border:none; background:none; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.15s; font-family:var(--font-body); }
+.nav-btn.active { color:white; border-bottom-color:var(--orange); }
+.nav-btn:hover:not(.active) { color:white; }
+
+.main { max-width:1100px; margin:0 auto; padding:1.5rem 2rem 3rem; }
+
+.cards-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:1.5rem; }
+.metric-card { background:white; border:1px solid var(--gray-200); border-radius:10px; padding:16px; }
+.metric-icon { font-size:20px; margin-bottom:8px; }
+.metric-value { font-size:26px; font-family:var(--font-head); font-weight:600; color:var(--navy); }
+.metric-label { font-size:11px; color:var(--gray-500); font-weight:500; text-transform:uppercase; letter-spacing:0.05em; margin-top:4px; }
+.metric-sub { font-size:11px; color:var(--gray-500); margin-top:2px; }
+
+.section { margin-bottom:1.5rem; }
+.section-title { font-family:var(--font-head); font-size:15px; font-weight:600; color:var(--navy); margin-bottom:12px; padding-bottom:8px; border-bottom:2px solid var(--orange); display:inline-block; }
+.card { background:white; border:1px solid var(--gray-200); border-radius:10px; overflow:hidden; margin-bottom:12px; }
+.card-header { padding:14px 18px; background:var(--navy); color:white; display:flex; align-items:center; justify-content:space-between; }
+.card-title { font-family:var(--font-head); font-size:14px; font-weight:600; }
+.card-body { padding:18px; }
+
+.page { display:none; }
+.page.active { display:block; }
+
+.prop-status-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--gray-200); }
+.prop-status-row:last-child { border-bottom:none; }
+.prop-status-name { font-size:14px; font-weight:500; color:var(--navy); }
+.prop-status-meta { font-size:12px; color:var(--gray-500); margin-top:2px; }
+.prop-status-badges { display:flex; gap:8px; align-items:center; }
+.status-pill { padding:4px 12px; border-radius:10px; font-size:11px; font-weight:600; }
+.status-active { background:#eff6ff; color:#1d4ed8; }
+.status-under-contract { background:#f5f3ff; color:#6d28d9; }
+.status-closed { background:#f0fdf4; color:#15803d; }
+
+.table { width:100%; border-collapse:collapse; font-size:13px; }
+.table th { text-align:left; padding:10px 14px; font-size:11px; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.05em; background:var(--gray-100); border-bottom:1px solid var(--gray-200); }
+.table td { padding:12px 14px; border-bottom:1px solid var(--gray-200); vertical-align:middle; }
+.table tr:last-child td { border-bottom:none; }
+
+.activity-feed { }
+.act-item { display:flex; gap:14px; padding:12px 0; border-bottom:1px solid var(--gray-200); }
+.act-item:last-child { border-bottom:none; }
+.act-left { flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.act-dot { width:10px; height:10px; border-radius:50%; background:var(--blue); flex-shrink:0; }
+.act-line { width:1px; background:var(--gray-200); flex:1; }
+.act-content { flex:1; }
+.act-type { font-size:11px; font-weight:600; color:var(--blue); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:3px; }
+.act-text { font-size:13px; color:var(--gray-700); line-height:1.5; }
+.act-date { font-size:11px; color:var(--gray-500); margin-top:4px; }
+
+.platform-bar { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+.platform-name { font-size:13px; font-weight:500; width:140px; flex-shrink:0; }
+.platform-track { flex:1; height:6px; background:var(--gray-200); border-radius:3px; overflow:hidden; }
+.platform-fill { height:100%; border-radius:3px; transition:width 0.5s; }
+.platform-num { font-size:12px; color:var(--gray-500); width:40px; text-align:right; }
+
+.broker-card { background:var(--navy); color:white; border-radius:12px; padding:20px; display:flex; align-items:center; gap:16px; margin-top:1.5rem; }
+.broker-avatar { width:50px; height:50px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; font-family:var(--font-head); font-size:18px; font-weight:600; color:white; flex-shrink:0; }
+.broker-name { font-family:var(--font-head); font-size:16px; font-weight:600; margin-bottom:2px; }
+.broker-title { font-size:12px; color:rgba(255,255,255,0.6); }
+.broker-contact { margin-left:auto; text-align:right; font-size:13px; color:rgba(255,255,255,0.8); line-height:1.8; }
+
+.loading { padding:3rem; text-align:center; color:var(--gray-500); }
+.spinner { width:32px; height:32px; border:3px solid var(--gray-200); border-top-color:var(--blue); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 12px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.error-state { text-align:center; padding:3rem; }
+.error-state h2 { font-family:var(--font-head); color:var(--navy); margin-bottom:8px; }
+.error-state p { color:var(--gray-500); font-size:14px; }
+
+.pat-setup { max-width:480px; margin:3rem auto; background:white; border-radius:14px; border:1px solid var(--gray-200); padding:2rem; }
+.pat-setup h2 { font-family:var(--font-head); color:var(--navy); margin-bottom:8px; }
+.pat-setup p { font-size:13px; color:var(--gray-500); margin-bottom:1rem; line-height:1.6; }
+.pat-setup input { width:100%; border:1px solid var(--gray-200); border-radius:6px; padding:10px 12px; font-size:13px; margin-bottom:10px; }
+.pat-setup button { background:var(--navy); color:white; border:none; padding:10px 20px; border-radius:6px; font-size:13px; font-weight:500; cursor:pointer; width:100%; }
+
+@media(max-width:600px) { .main { padding:1rem; } .cards-grid { grid-template-columns:1fr 1fr; } .header { padding:1rem; } }
+</style>
+</head>
+<body>
+
+<div id="loadingScreen" class="loading" style="padding:5rem"><div class="spinner"></div>Loading your portal...</div>
+
+<div id="patSetup" class="pat-setup" style="display:none">
+  <h2>Setup Required</h2>
+  <p>This portal is configured by your broker. Enter the Airtable access token to activate it. Contact Diego Sampson at diego@sampsonre.com if you need assistance.</p>
+  <input type="password" id="clientPat" placeholder="Enter access token..." />
+  <button onclick="saveClientPat()">Activate Portal</button>
+  <div id="clientPatStatus" style="font-size:12px;margin-top:8px;color:var(--red)"></div>
+</div>
+
+<div id="portalContent" style="display:none">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="header-label">Client Intelligence Portal</div>
+        <div class="header-client" id="clientName">Loading...</div>
+        <div class="header-prepared">Prepared by Diego Sampson, CCIM · Sampson Commercial Real Estate</div>
+      </div>
+      <div class="header-contact">
+        <strong>Diego Sampson, CCIM</strong><br>
+        ✉ diego@sampsonre.com<br>
+        ✆ 407-724-1167
+      </div>
+    </div>
+    <div class="nav-bar" style="margin:0.75rem -2rem 0; padding:0 2rem">
+      <button class="nav-btn active" onclick="switchPage('dashboard',this)">Dashboard</button>
+      <button class="nav-btn" onclick="switchPage('activity',this)">Activity</button>
+      <button class="nav-btn" onclick="switchPage('marketing',this)">Marketing</button>
+      <button class="nav-btn" onclick="switchPage('prospects',this)">Prospects</button>
+      <button class="nav-btn" onclick="switchPage('documents',this)">Documents</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div style="margin-bottom:1.5rem">
+        <div style="font-family:var(--font-head);font-size:18px;font-weight:600;color:var(--navy);margin-bottom:4px">Executive Summary</div>
+        <div style="font-size:13px;color:var(--gray-500)">Portfolio-level performance overview</div>
+      </div>
+      <div class="cards-grid" id="dashMetrics"></div>
+      <div class="section">
+        <div class="section-title">Property Status</div>
+        <div class="card">
+          <div class="card-body" id="propStatusList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVITY -->
+    <div class="page" id="page-activity">
+      <div style="margin-bottom:1.5rem">
+        <div style="font-family:var(--font-head);font-size:18px;font-weight:600;color:var(--navy);margin-bottom:4px">Activity Log</div>
+        <div style="font-size:13px;color:var(--gray-500)">All broker actions and updates for your properties</div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="activity-feed" id="activityFeed"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKETING -->
+    <div class="page" id="page-marketing">
+      <div style="margin-bottom:1.5rem">
+        <div style="font-family:var(--font-head);font-size:18px;font-weight:600;color:var(--navy);margin-bottom:4px">Marketing Performance</div>
+        <div style="font-size:13px;color:var(--gray-500)">Platform views, inquiries, and outreach activity</div>
+      </div>
+      <div id="marketingContent"></div>
+    </div>
+
+    <!-- PROSPECTS -->
+    <div class="page" id="page-prospects">
+      <div style="margin-bottom:1.5rem">
+        <div style="font-family:var(--font-head);font-size:18px;font-weight:600;color:var(--navy);margin-bottom:4px">Prospects & Pipeline</div>
+        <div style="font-size:13px;color:var(--gray-500)">Active inquiries and deal pipeline</div>
+      </div>
+      <div id="prospectsContent"></div>
+    </div>
+
+    <!-- DOCUMENTS -->
+    <div class="page" id="page-documents">
+      <div style="margin-bottom:1.5rem">
+        <div style="font-family:var(--font-head);font-size:18px;font-weight:600;color:var(--navy);margin-bottom:4px">Documents</div>
+        <div style="font-size:13px;color:var(--gray-500)">OMs, LOIs, lease abstracts, and marketing materials</div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div id="docsList"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="broker-card">
+      <div class="broker-avatar">DS</div>
+      <div>
+        <div class="broker-name">Diego Sampson, CCIM</div>
+        <div class="broker-title">Principal Broker · Sampson Commercial Real Estate</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px">Dual-Licensed Florida & Puerto Rico</div>
+      </div>
+      <div class="broker-contact">
+        diego@sampsonre.com<br>
+        407-724-1167<br>
+        sampsonre.com
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const BASE_ID = 'appuE12tiGsHtfLuR';
+const AT_API = 'https://api.airtable.com/v0';
+const TABLES = {
+  properties: 'tble75Hvhs5WVI26t',
+  deals: 'tblfqQb0kbBZm0w51',
+  activities: 'tblpRnPPxCVrSJsYs',
+  marketingStats: 'tblLYJ5x2NSTV90Ds',
+  leads: 'tblEJNkBNzW9YpPoH',
+};
+
+const CLIENT_CONFIG = {
+  'exit24-dorado-2024': {
+    name: 'Exit 24 — Dorado Development',
+    keywords: ['exit 24','dorado','exit24'],
+    propName: 'Exit 24 Retail Development · Dorado, Puerto Rico',
+    type: 'Retail Development · Ground Leases · Inline',
+  },
+  'ceiba-ferry-hms-2024': {
+    name: 'Ceiba Ferry Terminal',
+    keywords: ['ceiba','ferry','hornblower','hms'],
+    propName: 'Ceiba Ferry Terminal · Ceiba, Puerto Rico',
+    type: 'Retail & F&B Leasing · 4 Units + Rooftop',
+  },
+  'union-plaza-ed-2024': {
+    name: 'Union Plaza',
+    keywords: ['union plaza','union'],
+    propName: 'Union Plaza · 416 Av. Ponce de León, Hato Rey',
+    type: 'Office Leasing · 157,315 RSF',
+  },
+  'canton-mall-bayamon-2024': {
+    name: 'Canton Mall',
+    keywords: ['canton','cantón'],
+    propName: 'Canton Mall · Bayamón, Puerto Rico',
+    type: 'Retail Leasing · Shopping Center',
+  },
+};
+
+let pat = 'patLY5QEUEW5Lpkah.f5b0188f1ec670f8ba9dd18367454341fcd58d1e46eaf22697723c8fc9542f16'; // Replace with your Airtable PAT
+let clientId = '';
+let clientConfig = null;
+let allProperties=[], allDeals=[], allActivities=[], allMarketing=[], allLeads=[];
+
+function getHeaders() { return { 'Authorization':`Bearer ${pat}` }; }
+function fv(r,f) { const v=(r.fields||r.cellValuesByFieldId||{})[f]; if(v&&typeof v==='object'&&v.name)return v.name; return v; }
+function fmt$(v) { if(!v)return '—'; return '$'+Number(v).toLocaleString('en-US',{maximumFractionDigits:0}); }
+function fmtDate(d) { if(!d)return '—'; return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+
+function saveClientPat() {
+  const val = document.getElementById('clientPat').value.trim();
+  if (!val) return;
+  pat = val; localStorage.setItem('sc_pat', val);
+  document.getElementById('patSetup').style.display = 'none';
+  document.getElementById('loadingScreen').style.display = 'block';
+  loadPortal();
+}
+
+async function fetchAll(tableId) {
+  let records=[], offset=null;
+  do {
+    let url=`${AT_API}/${BASE_ID}/${tableId}?pageSize=100&returnFieldsByFieldId=true`;
+    if(offset) url+=`&offset=${offset}`;
+    const res=await fetch(url,{headers:getHeaders()});
+    if(!res.ok) throw new Error((await res.json()).error?.message||'API error');
+    const data=await res.json();
+    records=records.concat(data.records); offset=data.offset;
+  } while(offset);
+  return records;
+}
+
+function matchesClient(text) {
+  if (!text || !clientConfig) return false;
+  const t = text.toLowerCase();
+  return clientConfig.keywords.some(k => t.includes(k));
+}
+
+async function loadPortal() {
+  try {
+    const [props,deals,acts,mkt,leads] = await Promise.all([
+      fetchAll(TABLES.properties), fetchAll(TABLES.deals),
+      fetchAll(TABLES.activities), fetchAll(TABLES.marketingStats), fetchAll(TABLES.leads)
+    ]);
+    allProperties=props; allDeals=deals; allActivities=acts; allMarketing=mkt; allLeads=leads;
+
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('portalContent').style.display = 'block';
+    document.getElementById('clientName').textContent = clientConfig.name;
+    document.title = clientConfig.name + ' — Sampson Commercial';
+
+    renderDashboard(); renderActivity(); renderMarketing(); renderProspects(); renderDocuments();
+  } catch(e) {
+    document.getElementById('loadingScreen').innerHTML = `<div style="color:#dc2626;font-size:14px">Error loading portal: ${e.message}<br><br><button onclick="location.reload()" style="margin-top:10px;padding:8px 16px;background:#001A4C;color:white;border:none;border-radius:6px;cursor:pointer">Retry</button></div>`;
+  }
+}
+
+function renderDashboard() {
+  const myDeals = allDeals.filter(d => matchesClient(fv(d,'fldwx2kEFyoudmE4m')));
+  const myLeads = allLeads.filter(l => matchesClient(fv(l,'fldsf8sOdxxcVkF3A')||fv(l,'fldoSNNBoDrMiwh3Y')));
+  const myMkt = allMarketing.filter(m => matchesClient(fv(m,'fldhJeEgZ26O5oJjA')));
+  const myActs = allActivities.slice(0,20);
+  const totalViews = myMkt.reduce((s,m)=>s+(fv(m,'fldNhlAKjP76MJhb8')||0)+(fv(m,'fldrjxv8WqwPX6dWe')||0),0);
+  const totalInq = myMkt.reduce((s,m)=>s+(fv(m,'fldpqwFmuHgVEOwMU')||0),0);
+  const totalTours = myMkt.reduce((s,m)=>s+(fv(m,'fldY6H2ShZbnJPDI3')||0),0);
+  const totalLOIs = myMkt.reduce((s,m)=>s+(fv(m,'fldGEdf4F1OfRjKD5')||0),0);
+
+  document.getElementById('dashMetrics').innerHTML = `
+    <div class="metric-card"><div class="metric-icon">🏢</div><div class="metric-value">1</div><div class="metric-label">Properties</div></div>
+    <div class="metric-card"><div class="metric-icon">📈</div><div class="metric-value">${myActs.length}</div><div class="metric-label">Total Activity</div></div>
+    <div class="metric-card"><div class="metric-icon">👁</div><div class="metric-value">${totalViews}</div><div class="metric-label">Listing Views</div></div>
+    <div class="metric-card"><div class="metric-icon">📥</div><div class="metric-value">0</div><div class="metric-label">OM Downloads</div></div>
+    <div class="metric-card"><div class="metric-icon">📞</div><div class="metric-value">${myActs.filter(a=>fv(a,'fld3bRwf1ooXKs2Uq')==='Call').length}</div><div class="metric-label">Broker Outreach</div><div class="metric-sub">calls, emails & follow-ups</div></div>
+    <div class="metric-card"><div class="metric-icon">🚶</div><div class="metric-value">${totalTours}</div><div class="metric-label">Site Visits</div><div class="metric-sub">completed tours</div></div>
+    <div class="metric-card"><div class="metric-icon">👥</div><div class="metric-value">${myLeads.length}</div><div class="metric-label">Active Prospects</div></div>
+    <div class="metric-card"><div class="metric-icon">📄</div><div class="metric-value">${totalLOIs}</div><div class="metric-label">LOIs / Offers</div></div>`;
+
+  document.getElementById('propStatusList').innerHTML = `
+    <div class="prop-status-row">
+      <div>
+        <div class="prop-status-name">${clientConfig.propName}</div>
+        <div class="prop-status-meta">${clientConfig.type}</div>
+      </div>
+      <div class="prop-status-badges">
+        <span style="font-size:12px;color:var(--gray-500)">${totalViews} views · ${myLeads.length} prospects · ${totalTours} visits</span>
+        <span class="status-pill status-active">Active</span>
+      </div>
+    </div>`;
+}
+
+function renderActivity() {
+  const acts = allActivities.slice(0,30);
+  const typeColors = { 'Call':'#3b82f6','Email':'#8b5cf6','Meeting':'#f59e0b','Tour / Site Visit':'#10b981','LOI Received':'#ef4444','General Update':'#6b7280' };
+
+  document.getElementById('activityFeed').innerHTML = acts.length ? acts.map(a => {
+    const type = fv(a,'fld3bRwf1ooXKs2Uq') || 'Update';
+    const color = typeColors[type] || '#6b7280';
+    const dt = fv(a,'fldOCdpm5wYututlT');
+    return `<div class="act-item">
+      <div class="act-left"><div class="act-dot" style="background:${color}"></div></div>
+      <div class="act-content">
+        <div class="act-type" style="color:${color}">${type}</div>
+        <div class="act-text">${fv(a,'fldTCNZaWYNgVhYjb')||'Activity logged'}</div>
+        <div class="act-date">${dt ? new Date(dt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}) : '—'}</div>
+      </div>
+    </div>`;
+  }).join('') : '<div style="text-align:center;padding:2rem;color:var(--gray-500);font-size:13px">No activity logged yet</div>';
+}
+
+function renderMarketing() {
+  const myMkt = allMarketing.filter(m => matchesClient(fv(m,'fldhJeEgZ26O5oJjA')));
+  const totalViews   = myMkt.reduce((s,m)=>s+(fv(m,'fldWzSy3p2bicZdWO')||fv(m,'fldNhlAKjP76MJhb8')||0)+(fv(m,'fldrjxv8WqwPX6dWe')||0)+(fv(m,'fldZFOi21rG1kPExq')||0)+(fv(m,'fld6BQzXkM8MWzU3b')||0),0);
+  const totalDL      = myMkt.reduce((s,m)=>s+(fv(m,'fldEjXoXBjaclcYf4')||0),0);
+  const totalInq     = myMkt.reduce((s,m)=>s+(fv(m,'fldpqwFmuHgVEOwMU')||0),0);
+  const totalTours   = myMkt.reduce((s,m)=>s+(fv(m,'fldY6H2ShZbnJPDI3')||0),0);
+  const totalLOIs    = myMkt.reduce((s,m)=>s+(fv(m,'fldGEdf4F1OfRjKD5')||0),0);
+  const totalOutreach= myMkt.reduce((s,m)=>s+(fv(m,'fldehDyUOXHDLpenn')||0),0);
+  const totalSign    = myMkt.reduce((s,m)=>s+(fv(m,'fldqHrbFre7NK2k4C')||0),0);
+
+  const metrics = [
+    { label:'Total Views', value:totalViews, icon:'👁', sub:'All platforms combined' },
+    { label:'OM / Flyer Downloads', value:totalDL, icon:'📥', sub:'Brochure downloads' },
+    { label:'Inquiries', value:totalInq, icon:'💬', sub:'Leads received' },
+    { label:'Broker Outreach', value:totalOutreach, icon:'📞', sub:'Direct reach outs' },
+    { label:'Site Visits', value:totalTours, icon:'🚶', sub:'Completed tours' },
+    { label:'LOIs Received', value:totalLOIs, icon:'📄', sub:'Letters of intent' },
+    { label:'Sign Calls', value:totalSign, icon:'☎', sub:'Calls from signage' },
+  ];
+
+  document.getElementById('marketingContent').innerHTML = `
+    <div class="cards-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:1.5rem">
+      ${metrics.map(m=>`
+        <div class="metric-card">
+          <div class="metric-icon">${m.icon}</div>
+          <div class="metric-value">${m.value}</div>
+          <div class="metric-label">${m.label}</div>
+          <div class="metric-sub">${m.sub}</div>
+        </div>`).join('')}
+    </div>
+    ${myMkt.length===0?`<div class="card"><div class="card-body" style="text-align:center;padding:2rem;color:var(--gray-500);font-size:13px">Marketing stats will appear here as your listing receives activity.<br>Your broker updates these regularly.</div></div>`:''}`;
+}
+
+function renderProspects() {
+  const myLeads = allLeads.filter(l => matchesClient(fv(l,'fldsf8sOdxxcVkF3A')||fv(l,'fldoSNNBoDrMiwh3Y')));
+  const myDeals = allDeals.filter(d => matchesClient(fv(d,'fldwx2kEFyoudmE4m')));
+
+  const stageColors = { 'Prospect':'#eff6ff','Active':'#eff6ff','Under Negotiation':'#fffbeb','Under Contract':'#f5f3ff','Closed':'#f0fdf4' };
+  const stageText = { 'Prospect':'#1d4ed8','Active':'#1d4ed8','Under Negotiation':'#b45309','Under Contract':'#6d28d9','Closed':'#15803d' };
+
+  document.getElementById('prospectsContent').innerHTML = `
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-header"><div class="card-title">Deal Pipeline</div></div>
+      <div class="card-body" style="padding:0">
+        ${myDeals.length ? `<table class="table"><thead><tr><th>Deal</th><th>Stage</th><th>Next Step</th></tr></thead><tbody>
+          ${myDeals.map(d=>`<tr>
+            <td style="font-weight:500;color:var(--navy)">${fv(d,'fldwx2kEFyoudmE4m')}</td>
+            <td><span style="padding:3px 10px;border-radius:10px;font-size:11px;font-weight:500;background:${stageColors[fv(d,'fldnueQJxWwypnCVJ')]||'#f1f5f9'};color:${stageText[fv(d,'fldnueQJxWwypnCVJ')]||'#475569'}">${fv(d,'fldnueQJxWwypnCVJ')||'—'}</span></td>
+            <td style="font-size:12px;color:var(--gray-500)">${fv(d,'fld0lEDuwNkyeMjIQ')||'—'}</td>
+          </tr>`).join('')}
+        </tbody></table>` : '<div style="padding:1.5rem;text-align:center;color:var(--gray-500);font-size:13px">No active deals in pipeline</div>'}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Prospect Inquiries</div></div>
+      <div class="card-body" style="padding:0">
+        ${myLeads.length ? `<table class="table"><thead><tr><th>Prospect</th><th>Source</th><th>Date</th><th>Status</th></tr></thead><tbody>
+          ${myLeads.map(l=>`<tr>
+            <td style="font-weight:500">${fv(l,'fldsf8sOdxxcVkF3A')||'—'}</td>
+            <td>${fv(l,'fldJPwkvogQLXvTBp')||'—'}</td>
+            <td>${fmtDate(fv(l,'fldxckDZlB43PyOPJ'))}</td>
+            <td>${fv(l,'fldAPaqOlD7oY50dN')||'—'}</td>
+          </tr>`).join('')}
+        </tbody></table>` : '<div style="padding:1.5rem;text-align:center;color:var(--gray-500);font-size:13px">No prospect inquiries logged yet</div>'}
+      </div>
+    </div>`;
+}
+
+function renderDocuments() {
+  document.getElementById('docsList').innerHTML = `
+    <div style="text-align:center;padding:2rem;color:var(--gray-500)">
+      <div style="font-size:32px;margin-bottom:12px">📁</div>
+      <div style="font-size:14px;font-weight:500;color:var(--navy);margin-bottom:6px">No documents uploaded yet</div>
+      <div style="font-size:13px">Your broker will upload OMs, LOIs, and marketing materials here.</div>
+    </div>`;
+}
+
+function switchPage(pageId, btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+pageId).classList.add('active');
+  btn.classList.add('active');
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  clientId = params.get('client') || params.get('Client') || '';
+  // Also try hash-based routing as fallback
+  if (!clientId && window.location.hash) {
+    clientId = window.location.hash.replace('#','');
+  }
+  clientConfig = CLIENT_CONFIG[clientId] || CLIENT_CONFIG[clientId.toLowerCase()];
+
+  if (!clientConfig) {
+    document.getElementById('loadingScreen').innerHTML = `
+      <div class="error-state">
+        <h2>Portal Not Found</h2>
+        <p>This link is invalid or has expired.<br>Contact Diego Sampson at diego@sampsonre.com for a valid portal link.</p>
+        <p style="margin-top:12px;font-size:11px;color:#999">Debug: client="${clientId}" url="${window.location.href}"</p>
+      </div>`;
+    return;
+  }
+
+  loadPortal();
+});
+</script>
+</body>
+</html>

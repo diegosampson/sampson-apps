@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sampson Commercial — Deal Pipeline</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #001A4C;
+    --blue: #265CFF;
+    --orange: #FF9E59;
+    --light: #EDF2F7;
+    --white: #FFFFFF;
+    --gray-100: #F7F9FC;
+    --gray-200: #E8ECF2;
+    --gray-300: #C8D0DC;
+    --gray-500: #6B7A8D;
+    --gray-700: #374151;
+    --green: #16a34a;
+    --red: #dc2626;
+    --yellow: #d97706;
+    --font-head: 'Poppins', sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--gray-100); color: var(--gray-700); min-height: 100vh; }
+
+  /* HEADER */
+  .header {
+    background: var(--navy);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-brand { display: flex; align-items: center; gap: 12px; }
+  .header-logo { width: 32px; height: 32px; background: var(--blue); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+  .header-logo span { color: white; font-family: var(--font-head); font-weight: 600; font-size: 14px; }
+  .header-title { color: white; font-family: var(--font-head); font-weight: 600; font-size: 15px; letter-spacing: 0.02em; }
+  .header-sub { color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 1px; }
+  .header-actions { display: flex; align-items: center; gap: 12px; }
+  .btn-primary {
+    background: var(--blue); color: white; border: none; padding: 8px 16px;
+    border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;
+    font-family: var(--font-body); display: flex; align-items: center; gap: 6px;
+    transition: opacity 0.15s;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-secondary {
+    background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);
+    padding: 8px 14px; border-radius: 6px; font-size: 13px; cursor: pointer;
+    font-family: var(--font-body); transition: background 0.15s;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.18); }
+
+  /* SETUP BANNER */
+  .setup-banner {
+    background: linear-gradient(135deg, #001A4C 0%, #0a2d7a 100%);
+    border-bottom: 3px solid var(--orange);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .setup-banner.hidden { display: none; }
+  .setup-icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+  .setup-content { flex: 1; }
+  .setup-content h3 { color: white; font-family: var(--font-head); font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .setup-content p { color: rgba(255,255,255,0.7); font-size: 13px; line-height: 1.6; margin-bottom: 12px; }
+  .setup-fields { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+  .setup-field { display: flex; flex-direction: column; gap: 4px; }
+  .setup-field label { color: rgba(255,255,255,0.6); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .setup-field input {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25);
+    color: white; padding: 8px 12px; border-radius: 6px; font-size: 13px;
+    font-family: var(--font-body); width: 320px;
+  }
+  .setup-field input::placeholder { color: rgba(255,255,255,0.35); }
+  .setup-field input:focus { outline: none; border-color: var(--blue); background: rgba(255,255,255,0.15); }
+  .btn-connect {
+    background: var(--orange); color: var(--navy); border: none; padding: 9px 20px;
+    border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;
+    font-family: var(--font-body); white-space: nowrap; transition: opacity 0.15s;
+  }
+  .btn-connect:hover { opacity: 0.9; }
+  .setup-status { font-size: 12px; margin-top: 6px; }
+  .setup-status.ok { color: #4ade80; }
+  .setup-status.err { color: #f87171; }
+
+  /* TOOLBAR */
+  .toolbar {
+    background: white;
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: 52px;
+  }
+  .view-tabs { display: flex; gap: 2px; }
+  .view-tab {
+    padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 500;
+    cursor: pointer; border: none; background: none; color: var(--gray-500);
+    font-family: var(--font-body); transition: all 0.15s;
+  }
+  .view-tab.active { background: var(--navy); color: white; }
+  .view-tab:hover:not(.active) { background: var(--gray-100); color: var(--gray-700); }
+  .toolbar-sep { width: 1px; height: 24px; background: var(--gray-200); }
+  .filter-group { display: flex; align-items: center; gap: 8px; }
+  .filter-label { font-size: 12px; color: var(--gray-500); font-weight: 500; }
+  .filter-select {
+    border: 1px solid var(--gray-200); border-radius: 6px; padding: 5px 10px;
+    font-size: 12px; color: var(--gray-700); background: white; cursor: pointer;
+    font-family: var(--font-body);
+  }
+  .toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .sync-btn {
+    display: flex; align-items: center; gap: 6px; padding: 6px 12px;
+    border: 1px solid var(--gray-200); border-radius: 6px; background: white;
+    font-size: 12px; color: var(--gray-500); cursor: pointer; font-family: var(--font-body);
+    transition: all 0.15s;
+  }
+  .sync-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .sync-btn.loading { opacity: 0.6; pointer-events: none; }
+  .last-sync { font-size: 11px; color: var(--gray-500); }
+
+  /* SUMMARY CARDS */
+  .summary-bar {
+    padding: 1.25rem 2rem;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+  .summary-card {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .summary-card.alert { border-color: var(--red); background: #fff5f5; }
+  .summary-card.today { border-color: var(--orange); background: #fffbf5; }
+  .summary-label { font-size: 11px; color: var(--gray-500); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .summary-value { font-size: 24px; font-family: var(--font-head); font-weight: 600; color: var(--navy); }
+  .summary-sub { font-size: 11px; color: var(--gray-500); margin-top: 3px; }
+  .summary-card.alert .summary-value { color: var(--red); }
+  .summary-card.today .summary-value { color: var(--orange); }
+
+  /* KANBAN */
+  .kanban-board {
+    padding: 0 2rem 2rem;
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    align-items: flex-start;
+  }
+  .kanban-col {
+    flex-shrink: 0;
+    width: 240px;
+    background: var(--gray-100);
+    border-radius: 10px;
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+  }
+  .kanban-header {
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--gray-200);
+    background: white;
+  }
+  .kanban-stage { font-size: 12px; font-weight: 600; font-family: var(--font-head); color: var(--gray-700); display: flex; align-items: center; gap: 6px; }
+  .stage-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .stage-count { background: var(--gray-200); color: var(--gray-500); font-size: 11px; font-weight: 500; padding: 2px 7px; border-radius: 10px; }
+  .kanban-cards { padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 80px; }
+
+  /* DEAL CARD */
+  .deal-card {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .deal-card:hover { border-color: var(--blue); box-shadow: 0 2px 8px rgba(38,92,255,0.1); }
+  .deal-card.stale { border-left: 3px solid var(--red); }
+  .deal-card.due-today { border-left: 3px solid var(--orange); }
+  .deal-name { font-size: 13px; font-weight: 500; color: var(--navy); margin-bottom: 6px; line-height: 1.4; }
+  .deal-meta { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+  .badge {
+    font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 10px;
+    display: inline-flex; align-items: center;
+  }
+  .badge-market-fl { background: #EBF5FF; color: #1e40af; }
+  .badge-market-pr { background: #F0FDF4; color: #15803d; }
+  .badge-type { background: var(--light); color: var(--navy); }
+  .badge-role { background: #FFF7ED; color: #c2410c; }
+  .badge-stale { background: #FEF2F2; color: var(--red); }
+  .badge-today { background: #FFF7ED; color: var(--orange); }
+  .deal-commission { font-size: 12px; color: var(--gray-500); margin-bottom: 6px; }
+  .deal-commission strong { color: var(--green); font-weight: 600; }
+  .deal-next { font-size: 11px; color: var(--gray-500); padding: 6px 8px; background: var(--gray-100); border-radius: 5px; line-height: 1.4; }
+  .deal-score { position: absolute; top: 10px; right: 10px; display: flex; gap: 2px; }
+  .score-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gray-200); }
+  .score-dot.filled { background: var(--orange); }
+
+  /* GRID VIEW */
+  .grid-view { padding: 0 2rem 2rem; display: none; }
+  .grid-view.active { display: block; }
+  .grid-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; border: 1px solid var(--gray-200); overflow: hidden; font-size: 13px; }
+  .grid-table th { background: var(--navy); color: white; padding: 11px 14px; text-align: left; font-family: var(--font-head); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+  .grid-table td { padding: 11px 14px; border-bottom: 1px solid var(--gray-200); vertical-align: middle; }
+  .grid-table tr:last-child td { border-bottom: none; }
+  .grid-table tr:hover td { background: var(--gray-100); }
+  .grid-table tr.stale td { background: #fff5f5; }
+  .grid-table tr.due-today td { background: #fffbf5; }
+  .stage-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+
+  /* DETAIL MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: white; border-radius: 14px; width: 580px; max-width: 95vw;
+    max-height: 90vh; overflow-y: auto;
+    transform: translateY(20px); transition: transform 0.2s;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--gray-200); display: flex; align-items: flex-start; justify-content: space-between; }
+  .modal-title { font-family: var(--font-head); font-size: 17px; font-weight: 600; color: var(--navy); }
+  .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--gray-500); padding: 2px 6px; border-radius: 4px; }
+  .modal-close:hover { background: var(--gray-100); }
+  .modal-body { padding: 20px 24px; }
+  .modal-section { margin-bottom: 20px; }
+  .modal-section-title { font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+  .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .modal-field label { font-size: 11px; color: var(--gray-500); margin-bottom: 4px; display: block; }
+  .modal-field input, .modal-field select, .modal-field textarea {
+    width: 100%; border: 1px solid var(--gray-200); border-radius: 6px;
+    padding: 8px 10px; font-size: 13px; font-family: var(--font-body);
+    color: var(--gray-700); background: white;
+  }
+  .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus {
+    outline: none; border-color: var(--blue);
+  }
+  .modal-field textarea { resize: vertical; min-height: 70px; }
+  .modal-field.full { grid-column: 1 / -1; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--gray-200); display: flex; gap: 10px; justify-content: flex-end; }
+  .btn-save { background: var(--navy); color: white; border: none; padding: 9px 20px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: var(--font-body); }
+  .btn-save:hover { opacity: 0.85; }
+  .btn-cancel { background: none; border: 1px solid var(--gray-200); color: var(--gray-700); padding: 9px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; font-family: var(--font-body); }
+  .btn-cancel:hover { background: var(--gray-100); }
+  .btn-danger { background: none; border: 1px solid #fca5a5; color: var(--red); padding: 9px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; font-family: var(--font-body); }
+
+  /* NEW DEAL MODAL */
+  .airtable-link { font-size: 11px; color: var(--blue); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+  .airtable-link:hover { text-decoration: underline; }
+
+  /* LOADING */
+  .loading-state { padding: 3rem 2rem; text-align: center; color: var(--gray-500); font-size: 14px; }
+  .spinner { width: 32px; height: 32px; border: 3px solid var(--gray-200); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* EMPTY STATE */
+  .empty-col { padding: 16px; text-align: center; color: var(--gray-500); font-size: 12px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; background: var(--navy); color: white;
+    padding: 12px 18px; border-radius: 8px; font-size: 13px; z-index: 300;
+    transform: translateY(60px); opacity: 0; transition: all 0.3s;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-left: 4px solid #4ade80; }
+  .toast.error { border-left: 4px solid #f87171; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .summary-bar { grid-template-columns: repeat(3, 1fr); }
+    .kanban-board { padding: 0 1rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="header-logo"><span>SC</span></div>
+    <div>
+      <div class="header-title">Sampson Commercial</div>
+      <div class="header-sub">Deal Pipeline</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn-secondary" onclick="resetToken()" title="Change Airtable token">⚙ Token</button>
+    <button class="btn-secondary" onclick="showNewDealModal()">+ New Deal</button>
+    <button class="btn-primary" onclick="syncData()">↻ Sync Airtable</button>
+  </div>
+</div>
+
+<!-- SETUP BANNER -->
+<div class="setup-banner" id="setupBanner">
+  <div class="setup-icon">🔑</div>
+  <div class="setup-content">
+    <h3>Connect your Airtable</h3>
+    <p>Paste your Personal Access Token below. It is stored only in your browser (localStorage) and never sent anywhere except directly to Airtable's API.</p>
+    <div class="setup-fields">
+      <div class="setup-field">
+        <label>Airtable Personal Access Token</label>
+        <input type="password" id="patInput" placeholder="patxxxxxxxxxxxxxxxx..." autocomplete="off" />
+      </div>
+      <button class="btn-connect" onclick="saveToken()">Connect →</button>
+    </div>
+    <div class="setup-status" id="setupStatus"></div>
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="view-tabs">
+    <button class="view-tab active" onclick="switchView('kanban', this)">Kanban</button>
+    <button class="view-tab" onclick="switchView('grid', this)">Grid</button>
+    <button class="view-tab" onclick="switchView('stale', this)">Stale Deals</button>
+    <button class="view-tab" onclick="switchView('today', this)">Today's Actions</button>
+    <button class="view-tab" onclick="switchView('commissions', this)">💰 Commissions</button>
+  </div>
+  <div class="toolbar-sep"></div>
+  <div class="filter-group">
+    <span class="filter-label">Market</span>
+    <select class="filter-select" id="filterMarket" onchange="applyFilters()">
+      <option value="">All Markets</option>
+      <option value="Puerto Rico">Puerto Rico</option>
+      <option value="Florida">Florida</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Type</span>
+    <select class="filter-select" id="filterType" onchange="applyFilters()">
+      <option value="">All Types</option>
+      <option value="Retail Leasing">Retail Leasing</option>
+      <option value="Investment Sale">Investment Sale</option>
+      <option value="Ground Lease">Ground Lease</option>
+      <option value="Office Leasing">Office Leasing</option>
+      <option value="Development Consulting">Development Consulting</option>
+    </select>
+  </div>
+  <div class="toolbar-right">
+    <span class="last-sync" id="lastSync">Not synced</span>
+    <button class="sync-btn" id="syncBtn" onclick="syncData()">
+      <span>↻</span> Refresh
+    </button>
+  </div>
+</div>
+
+<!-- SUMMARY CARDS -->
+<div class="summary-bar" id="summaryBar">
+  <div class="summary-card">
+    <div class="summary-label">Active Deals</div>
+    <div class="summary-value" id="sumActive">—</div>
+    <div class="summary-sub">Total pipeline</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Pipeline Value</div>
+    <div class="summary-value" id="sumValue">—</div>
+    <div class="summary-sub">Weighted commission</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Under Contract</div>
+    <div class="summary-value" id="sumContract">—</div>
+    <div class="summary-sub">Deals closing</div>
+  </div>
+  <div class="summary-card alert">
+    <div class="summary-label">Stale Deals</div>
+    <div class="summary-value" id="sumStale">—</div>
+    <div class="summary-sub">No action in 7+ days</div>
+  </div>
+  <div class="summary-card today">
+    <div class="summary-label">Due Today</div>
+    <div class="summary-value" id="sumToday">—</div>
+    <div class="summary-sub">Actions needed now</div>
+  </div>
+</div>
+
+<!-- KANBAN VIEW -->
+<div id="kanbanView">
+  <div class="loading-state" id="loadingState">
+    <div class="spinner"></div>
+    Connect Airtable to load your pipeline
+  </div>
+  <div class="kanban-board" id="kanbanBoard" style="display:none;"></div>
+</div>
+
+<!-- GRID VIEW -->
+<div class="grid-view" id="gridView">
+  <table class="grid-table" id="gridTable">
+    <thead>
+      <tr>
+        <th>Deal Name</th>
+        <th>Market</th>
+        <th>Type</th>
+        <th>Stage</th>
+        <th>Score</th>
+        <th>Est. Commission</th>
+        <th>Next Action</th>
+        <th>Next Date</th>
+        <th>Days Stale</th>
+      </tr>
+    </thead>
+    <tbody id="gridBody"></tbody>
+  </table>
+</div>
+
+<!-- COMMISSIONS VIEW -->
+<div class="grid-view" id="commissionsView">
+  <div style="margin-bottom:16px;">
+    <div style="display:flex;gap:12px;margin-bottom:16px;" id="commSummaryCards"></div>
+  </div>
+  <table class="grid-table" id="commTable">
+    <thead>
+      <tr>
+        <th>Deal</th>
+        <th>Market</th>
+        <th>Commission Status</th>
+        <th>Net Commission</th>
+        <th>Collected</th>
+        <th>Balance</th>
+        <th>Due Date</th>
+        <th>Rent Start</th>
+      </tr>
+    </thead>
+    <tbody id="commBody"></tbody>
+  </table>
+</div>
+<div class="modal-overlay" id="dealModal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalTitle">Deal Details</div>
+        <a class="airtable-link" id="modalAirtableLink" href="#" target="_blank">↗ Open in Airtable</a>
+      </div>
+      <button class="modal-close" onclick="closeDealModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="modal-section-title">Deal Info</div>
+        <div class="modal-grid">
+          <div class="modal-field full">
+            <label>Deal Name</label>
+            <input type="text" id="editName" />
+          </div>
+          <div class="modal-field">
+            <label>Stage</label>
+            <select id="editStage">
+              <option>Prospect</option>
+              <option>Active</option>
+              <option>Under Negotiation</option>
+              <option>Under Contract</option>
+              <option>Closed</option>
+              <option>Dead</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label>Market</label>
+            <select id="editMarket">
+              <option>Puerto Rico</option>
+              <option>Florida</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label>Deal Score (1–5)</label>
+            <select id="editScore">
+              <option value="">—</option>
+              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label>My Role</label>
+            <select id="editRole">
+              <option value="">—</option>
+              <option>Listing Broker</option>
+              <option>Buyer Rep</option>
+              <option>Tenant Rep</option>
+              <option>Co-Broker</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">Next Action</div>
+        <div class="modal-grid">
+          <div class="modal-field full">
+            <label>Next Action</label>
+            <input type="text" id="editNextAction" placeholder="e.g. Follow up on LOI, Send OM to prospect..." />
+          </div>
+          <div class="modal-field">
+            <label>Next Action Date</label>
+            <input type="date" id="editNextDate" />
+          </div>
+          <div class="modal-field">
+            <label>Probability (%)</label>
+            <input type="number" id="editProb" min="0" max="100" placeholder="0–100" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">Commission</div>
+        <div class="modal-grid">
+          <div class="modal-field">
+            <label>Transaction Value ($)</label>
+            <input type="number" id="editTxValue" placeholder="0" />
+          </div>
+          <div class="modal-field">
+            <label>Gross Commission %</label>
+            <input type="number" id="editCommPct" placeholder="e.g. 5" step="0.1" />
+          </div>
+          <div class="modal-field">
+            <label>Buyer / Tenant</label>
+            <input type="text" id="editBuyer" />
+          </div>
+          <div class="modal-field">
+            <label>Seller / Landlord</label>
+            <input type="text" id="editSeller" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">Notes</div>
+        <div class="modal-grid">
+          <div class="modal-field full">
+            <label>Notes</label>
+            <textarea id="editNotes" rows="4"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-danger" onclick="closeDealModal()">Cancel</button>
+      <button class="btn-cancel" onclick="closeDealModal()">Close</button>
+      <button class="btn-save" onclick="saveDeal()">Save to Airtable</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const BASE_ID = 'appuE12tiGsHtfLuR';
+const DEALS_TABLE = 'tblfqQb0kbBZm0w51';
+const AT_API = 'https://api.airtable.com/v0';
+
+const STAGES = ['Prospect','Active','Under Negotiation','Under Contract','Closed','Dead'];
+const STAGE_COLORS = {
+  'Prospect':         { dot: '#94a3b8', bg: '#f1f5f9', text: '#475569' },
+  'Active':           { dot: '#3b82f6', bg: '#eff6ff', text: '#1d4ed8' },
+  'Under Negotiation':{ dot: '#f59e0b', bg: '#fffbeb', text: '#b45309' },
+  'Under Contract':   { dot: '#8b5cf6', bg: '#f5f3ff', text: '#6d28d9' },
+  'Closed':           { dot: '#10b981', bg: '#ecfdf5', text: '#065f46' },
+  'Dead':             { dot: '#6b7280', bg: '#f9fafb', text: '#6b7280' },
+};
+
+const FIELDS = {
+  name:       'fldwx2kEFyoudmE4m',
+  market:     'fldRnIWYMc6keKaoS',
+  dealType:   'flda8py7jrQ9sj0TK',
+  stage:      'fldnueQJxWwypnCVJ',
+  txValue:    'fldREhgKiSrmiloEx',
+  commPct:    'fldL5VvPRYrvrUyCP',
+  estComm:    'fldH1z1VUuGePawuc',
+  myNetComm:  'fld0I5PcXaTnv5QCc',
+  nextAction: 'fld0lEDuwNkyeMjIQ',
+  nextDate:   'fld3RBKlYIK4MPT3l',
+  probability:'fldwVAo3th1MXS6so',
+  weighted:   'fldVvMyEu6xf7UAEL',
+  score:      'fldPtyzXRm8KeZpXo',
+  notes:      'fldgCIidaReeJYhMu',
+  buyer:      'fldpHEBktGM3z7sLj',
+  seller:     'flddutxvSzn82zN3V',
+  role:       'fldN9zV0pMje3wGzA',
+  commStatus: 'fld0wOKZMSSqao7i5',
+  commCollected: 'fldx9s1DJLt2uIX2h',
+  commBalance: 'flddN4vLhDi2FNFRI',
+  commDueDate: 'fld9k4NoBQ9UzFqh6',
+  rentStart: 'fldac5Xd704f28CFr',
+};
+
+let allDeals = [];
+let filteredDeals = [];
+let currentView = 'kanban';
+let editingRecordId = null;
+let pat = localStorage.getItem('sc_pat') || '';
+
+function getHeaders() {
+  return { 'Authorization': `Bearer ${pat}`, 'Content-Type': 'application/json' };
+}
+
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+function saveToken() {
+  const val = document.getElementById('patInput').value.trim();
+  if (!val) { document.getElementById('setupStatus').textContent = 'Please enter a token.'; return; }
+  pat = val;
+  localStorage.setItem('sc_pat', val);
+  document.getElementById('setupStatus').className = 'setup-status ok';
+  document.getElementById('setupStatus').textContent = 'Connecting...';
+  syncData();
+}
+
+function hideBanner() {
+  document.getElementById('setupBanner').classList.add('hidden');
+}
+
+function daysSince(dateStr) {
+  if (!dateStr) return 999;
+  const d = new Date(dateStr);
+  const now = new Date();
+  return Math.floor((now - d) / 86400000);
+}
+
+function isToday(dateStr) {
+  if (!dateStr) return false;
+  const d = new Date(dateStr + 'T00:00:00');
+  const now = new Date();
+  return d.toDateString() === now.toDateString();
+}
+
+function isPastDue(dateStr) {
+  if (!dateStr) return false;
+  const d = new Date(dateStr + 'T00:00:00');
+  const now = new Date();
+  now.setHours(0,0,0,0);
+  return d < now;
+}
+
+function formatCurrency(val) {
+  if (!val) return '—';
+  return '$' + Number(val).toLocaleString('en-US', {maximumFractionDigits: 0});
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+async function syncData() {
+  if (!pat) { showToast('Enter your Airtable token first', 'error'); return; }
+  const btn = document.getElementById('syncBtn');
+  btn.classList.add('loading');
+  btn.innerHTML = '<span>↻</span> Loading...';
+
+  try {
+    let records = [];
+    let offset = null;
+    do {
+      let url = `${AT_API}/${BASE_ID}/${DEALS_TABLE}?pageSize=100&returnFieldsByFieldId=true&cellFormat=json`;
+      if (offset) url += `&offset=${offset}`;
+      const res = await fetch(url, { headers: getHeaders() });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error?.message || 'API error');
+      }
+      const data = await res.json();
+      records = records.concat(data.records);
+      offset = data.offset;
+    } while (offset);
+
+    allDeals = records.map(r => {
+      const f = r.fields || {};
+      return {
+        id: r.id,
+        name: f[FIELDS.name] || 'Untitled',
+        market: f[FIELDS.market]?.name || f[FIELDS.market] || '',
+        dealType: (f[FIELDS.dealType] || []).map(t => t.name || t).join(', '),
+        stage: f[FIELDS.stage]?.name || f[FIELDS.stage] || 'Prospect',
+        txValue: f[FIELDS.txValue] || 0,
+        commPct: f[FIELDS.commPct] || 0,
+        estComm: f[FIELDS.estComm] || 0,
+        myNetComm: f[FIELDS.myNetComm] || 0,
+        nextAction: f[FIELDS.nextAction] || '',
+        nextDate: f[FIELDS.nextDate] || '',
+        probability: f[FIELDS.probability] || 0,
+        weighted: f[FIELDS.weighted] || 0,
+        score: f[FIELDS.score]?.name || f[FIELDS.score] || '',
+        notes: f[FIELDS.notes] || '',
+        buyer: f[FIELDS.buyer] || '',
+        seller: f[FIELDS.seller] || '',
+        role: f[FIELDS.role]?.name || f[FIELDS.role] || '',
+        commStatus: f[FIELDS.commStatus]?.name || f[FIELDS.commStatus] || '',
+        commCollected: f[FIELDS.commCollected] || 0,
+        commBalance: f[FIELDS.commBalance] || 0,
+        commDueDate: f[FIELDS.commDueDate] || '',
+        rentStart: f[FIELDS.rentStart] || '',
+      };
+    });
+
+    hideBanner();
+    document.getElementById('setupStatus').className = 'setup-status ok';
+    document.getElementById('setupStatus').textContent = '✓ Connected';
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('lastSync').textContent = 'Synced ' + new Date().toLocaleTimeString();
+
+    applyFilters();
+    showToast(`Loaded ${allDeals.length} deals from Airtable`);
+  } catch(e) {
+    document.getElementById('setupStatus').className = 'setup-status err';
+    document.getElementById('setupStatus').textContent = '✗ ' + e.message;
+    showToast('Sync failed: ' + e.message, 'error');
+    document.getElementById('loadingState').innerHTML = `<div style="color:#dc2626">Failed to load: ${e.message}</div><br><button class="btn-primary" onclick="syncData()">Retry</button>`;
+  } finally {
+    btn.classList.remove('loading');
+    btn.innerHTML = '<span>↻</span> Refresh';
+  }
+}
+
+function applyFilters() {
+  const market = document.getElementById('filterMarket').value;
+  const type = document.getElementById('filterType').value;
+
+  filteredDeals = allDeals.filter(d => {
+    if (market && d.market !== market) return false;
+    if (type && !d.dealType.includes(type)) return false;
+    if (currentView === 'stale') return daysSince(d.nextDate) >= 7 && d.stage !== 'Closed' && d.stage !== 'Dead';
+    if (currentView === 'today') return isToday(d.nextDate) || isPastDue(d.nextDate);
+    return true;
+  });
+
+  updateSummary();
+  if (currentView === 'kanban' || currentView === 'stale' || currentView === 'today') renderKanban();
+  else renderGrid();
+}
+
+function updateSummary() {
+  const active = allDeals.filter(d => !['Closed','Dead'].includes(d.stage));
+  const weighted = active.reduce((s, d) => s + (d.weighted || 0), 0);
+  const contract = allDeals.filter(d => d.stage === 'Under Contract').length;
+  const stale = allDeals.filter(d => daysSince(d.nextDate) >= 7 && !['Closed','Dead'].includes(d.stage)).length;
+  const today = allDeals.filter(d => isToday(d.nextDate) || isPastDue(d.nextDate)).length;
+
+  document.getElementById('sumActive').textContent = active.length;
+  document.getElementById('sumValue').textContent = formatCurrency(weighted);
+  document.getElementById('sumContract').textContent = contract;
+  document.getElementById('sumStale').textContent = stale;
+  document.getElementById('sumToday').textContent = today;
+}
+
+function renderScoreDots(score) {
+  const s = parseInt(score) || 0;
+  return [1,2,3,4,5].map(i => `<div class="score-dot ${i <= s ? 'filled' : ''}"></div>`).join('');
+}
+
+function buildCard(deal) {
+  const staleClass = daysSince(deal.nextDate) >= 7 && !['Closed','Dead'].includes(deal.stage) ? 'stale' : '';
+  const todayClass = !staleClass && (isToday(deal.nextDate) || isPastDue(deal.nextDate)) ? 'due-today' : '';
+  const mktBadge = deal.market === 'Florida' ? 'badge-market-fl' : 'badge-market-pr';
+  const comm = deal.myNetComm || deal.estComm;
+  const commText = comm ? `Net: <strong>${formatCurrency(comm)}</strong>` : '';
+  const nextText = deal.nextAction ? `${deal.nextAction}${deal.nextDate ? ' · ' + formatDate(deal.nextDate) : ''}` : (deal.nextDate ? 'Due: ' + formatDate(deal.nextDate) : 'No next action set');
+
+  return `
+    <div class="deal-card ${staleClass} ${todayClass}" onclick="openDeal('${deal.id}')">
+      <div class="deal-score">${renderScoreDots(deal.score)}</div>
+      <div class="deal-name">${deal.name}</div>
+      <div class="deal-meta">
+        ${deal.market ? `<span class="badge ${mktBadge}">${deal.market}</span>` : ''}
+        ${deal.dealType ? `<span class="badge badge-type">${deal.dealType.split(',')[0]}</span>` : ''}
+        ${deal.role ? `<span class="badge badge-role">${deal.role}</span>` : ''}
+        ${staleClass ? `<span class="badge badge-stale">Stale ${daysSince(deal.nextDate)}d</span>` : ''}
+        ${todayClass ? `<span class="badge badge-today">Due today</span>` : ''}
+      </div>
+      ${commText ? `<div class="deal-commission">${commText}${deal.probability ? ` · ${Math.round(deal.probability*100)}% prob` : ''}</div>` : ''}
+      <div class="deal-next">${nextText}</div>
+    </div>`;
+}
+
+function renderKanban() {
+  const board = document.getElementById('kanbanBoard');
+  board.style.display = 'flex';
+
+  const stagesToShow = (currentView === 'stale' || currentView === 'today')
+    ? STAGES.filter(s => !['Closed','Dead'].includes(s))
+    : STAGES;
+
+  board.innerHTML = stagesToShow.map(stage => {
+    const deals = filteredDeals.filter(d => d.stage === stage);
+    const sc = STAGE_COLORS[stage] || STAGE_COLORS['Prospect'];
+    return `
+      <div class="kanban-col">
+        <div class="kanban-header">
+          <div class="kanban-stage">
+            <div class="stage-dot" style="background:${sc.dot}"></div>
+            ${stage}
+          </div>
+          <div class="stage-count">${deals.length}</div>
+        </div>
+        <div class="kanban-cards">
+          ${deals.length ? deals.map(buildCard).join('') : '<div class="empty-col">No deals</div>'}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderGrid() {
+  const tbody = document.getElementById('gridBody');
+  tbody.innerHTML = filteredDeals.map(deal => {
+    const staleClass = daysSince(deal.nextDate) >= 7 && !['Closed','Dead'].includes(deal.stage) ? 'stale' : '';
+    const todayClass = !staleClass && (isToday(deal.nextDate) || isPastDue(deal.nextDate)) ? 'due-today' : '';
+    const sc = STAGE_COLORS[deal.stage] || STAGE_COLORS['Prospect'];
+    const days = daysSince(deal.nextDate);
+    return `
+      <tr class="${staleClass} ${todayClass}" onclick="openDeal('${deal.id}')" style="cursor:pointer">
+        <td style="font-weight:500;color:var(--navy)">${deal.name}</td>
+        <td>${deal.market || '—'}</td>
+        <td>${deal.dealType || '—'}</td>
+        <td><span class="stage-pill" style="background:${sc.bg};color:${sc.text}">
+          <span style="width:6px;height:6px;border-radius:50%;background:${sc.dot};display:inline-block"></span>
+          ${deal.stage}
+        </span></td>
+        <td>${deal.score || '—'}</td>
+        <td>${formatCurrency(deal.myNetComm || deal.estComm)}</td>
+        <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${deal.nextAction || '—'}</td>
+        <td>${formatDate(deal.nextDate)}</td>
+        <td style="color:${days >= 7 ? 'var(--red)' : 'var(--gray-500)'}">${deal.nextDate ? days + 'd' : '—'}</td>
+      </tr>`;
+  }).join('');
+}
+
+function renderCommissions() {
+  const commView = document.getElementById('commissionsView');
+  commView.classList.add('active');
+
+  // Show closed + partial + recent closed (last 12 months of paid)
+  const partial = allDeals.filter(d => d.commStatus === 'Partial');
+  const notCollected = allDeals.filter(d => d.commStatus === 'Not Collected');
+  const recentClosed = allDeals.filter(d => d.stage === 'Closed' && d.commStatus === 'Paid in Full');
+  const display = [...partial, ...notCollected, ...recentClosed];
+
+  // Summary cards
+  const totalBalance = partial.reduce((s, d) => s + (d.myNetComm - d.commCollected), 0);
+  const totalPending = notCollected.reduce((s, d) => s + (d.myNetComm || 0), 0);
+  const totalCollected = recentClosed.reduce((s, d) => s + (d.commCollected || 0), 0);
+
+  document.getElementById('commSummaryCards').innerHTML = `
+    <div class="summary-card alert" style="flex:1">
+      <div class="summary-label">Partial — Balance Due</div>
+      <div class="summary-value">${formatCurrency(totalBalance)}</div>
+      <div class="summary-sub">${partial.length} deal${partial.length !== 1 ? 's' : ''} with open balance</div>
+    </div>
+    <div class="summary-card today" style="flex:1">
+      <div class="summary-label">Not Collected</div>
+      <div class="summary-value">${formatCurrency(totalPending)}</div>
+      <div class="summary-sub">${notCollected.length} deal${notCollected.length !== 1 ? 's' : ''} pending payment</div>
+    </div>
+    <div class="summary-card" style="flex:1">
+      <div class="summary-label">Paid in Full</div>
+      <div class="summary-value" style="color:var(--green)">${formatCurrency(totalCollected)}</div>
+      <div class="summary-sub">${recentClosed.length} deal${recentClosed.length !== 1 ? 's' : ''} closed & paid</div>
+    </div>`;
+
+  const statusColor = {
+    'Partial': { bg: '#fffbeb', text: '#b45309', border: '#fcd34d' },
+    'Not Collected': { bg: '#fef2f2', text: '#dc2626', border: '#fca5a5' },
+    'Paid in Full': { bg: '#f0fdf4', text: '#15803d', border: '#86efac' },
+    'Written Off': { bg: '#f9fafb', text: '#6b7280', border: '#d1d5db' },
+  };
+
+  document.getElementById('commBody').innerHTML = display.map(deal => {
+    const sc = statusColor[deal.commStatus] || statusColor['Written Off'];
+    const net = deal.myNetComm || deal.estComm || 0;
+    const collected = deal.commCollected || 0;
+    const balance = net - collected;
+    const isOverdue = deal.commDueDate && new Date(deal.commDueDate) < new Date();
+    return `
+      <tr onclick="openDeal('${deal.id}')" style="cursor:pointer">
+        <td style="font-weight:500;color:var(--navy)">${deal.name}</td>
+        <td>${deal.market || '—'}</td>
+        <td><span style="display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:500;background:${sc.bg};color:${sc.text};border:1px solid ${sc.border}">${deal.commStatus || '—'}</span></td>
+        <td style="font-weight:500;color:var(--navy)">${formatCurrency(net)}</td>
+        <td style="color:var(--green)">${collected ? formatCurrency(collected) : '—'}</td>
+        <td style="color:${balance > 0 ? 'var(--red)' : 'var(--gray-500)'};font-weight:${balance > 0 ? '600' : '400'}">${balance > 0 ? formatCurrency(balance) : '—'}</td>
+        <td style="color:${isOverdue ? 'var(--red)' : 'var(--gray-700)'}">${formatDate(deal.commDueDate)}${isOverdue ? ' ⚠' : ''}</td>
+        <td>${formatDate(deal.rentStart)}</td>
+      </tr>`;
+  }).join('') || '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--gray-500)">No commission records found</td></tr>';
+}
+
+function switchView(view, btn) {
+  currentView = view;
+  document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const kanban = document.getElementById('kanbanView');
+  const grid = document.getElementById('gridView');
+  const commissions = document.getElementById('commissionsView');
+
+  kanban.style.display = 'none';
+  grid.classList.remove('active');
+  commissions.classList.remove('active');
+
+  if (view === 'grid' || view === 'stale' || view === 'today') {
+    if (view === 'grid') {
+      grid.classList.add('active');
+    } else {
+      kanban.style.display = 'block';
+    }
+    applyFilters();
+  } else if (view === 'commissions') {
+    commissions.classList.add('active');
+    renderCommissions();
+  } else {
+    kanban.style.display = 'block';
+    applyFilters();
+  }
+}
+
+function openDeal(id) {
+  const deal = allDeals.find(d => d.id === id);
+  if (!deal) return;
+  editingRecordId = id;
+
+  document.getElementById('modalTitle').textContent = deal.name;
+  document.getElementById('modalAirtableLink').href = `https://airtable.com/${BASE_ID}/${DEALS_TABLE}/${id}`;
+  document.getElementById('editName').value = deal.name;
+  document.getElementById('editStage').value = deal.stage;
+  document.getElementById('editMarket').value = deal.market;
+  document.getElementById('editScore').value = deal.score;
+  document.getElementById('editRole').value = deal.role;
+  document.getElementById('editNextAction').value = deal.nextAction;
+  document.getElementById('editNextDate').value = deal.nextDate;
+  document.getElementById('editProb').value = deal.probability ? Math.round(deal.probability * 100) : '';
+  document.getElementById('editTxValue').value = deal.txValue || '';
+  document.getElementById('editCommPct').value = deal.commPct ? Math.round(deal.commPct * 100) : '';
+  document.getElementById('editBuyer').value = deal.buyer;
+  document.getElementById('editSeller').value = deal.seller;
+  document.getElementById('editNotes').value = deal.notes;
+
+  document.getElementById('dealModal').classList.add('open');
+}
+
+function closeDealModal() {
+  document.getElementById('dealModal').classList.remove('open');
+  editingRecordId = null;
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('dealModal')) closeDealModal();
+}
+
+async function saveDeal() {
+  if (!editingRecordId) return;
+  const prob = document.getElementById('editProb').value;
+  const commPct = document.getElementById('editCommPct').value;
+  const txVal = document.getElementById('editTxValue').value;
+
+  const fields = {};
+  const name = document.getElementById('editName').value;
+  const stage = document.getElementById('editStage').value;
+  const market = document.getElementById('editMarket').value;
+  const score = document.getElementById('editScore').value;
+  const role = document.getElementById('editRole').value;
+  const nextAction = document.getElementById('editNextAction').value;
+  const nextDate = document.getElementById('editNextDate').value;
+  const buyer = document.getElementById('editBuyer').value;
+  const seller = document.getElementById('editSeller').value;
+  const notes = document.getElementById('editNotes').value;
+
+  if (name) fields[FIELDS.name] = name;
+  if (stage) fields[FIELDS.stage] = stage;
+  if (market) fields[FIELDS.market] = market;
+  if (score) fields[FIELDS.score] = score;
+  if (role) fields[FIELDS.role] = role;
+  if (nextAction) fields[FIELDS.nextAction] = nextAction;
+  if (nextDate) fields[FIELDS.nextDate] = nextDate;
+  if (buyer) fields[FIELDS.buyer] = buyer;
+  if (seller) fields[FIELDS.seller] = seller;
+  if (notes) fields[FIELDS.notes] = notes;
+  if (prob) fields[FIELDS.probability] = parseFloat(prob) / 100;
+  if (txVal) fields[FIELDS.txValue] = parseFloat(txVal);
+  if (commPct) fields[FIELDS.commPct] = parseFloat(commPct) / 100;
+
+  try {
+    const res = await fetch(`${AT_API}/${BASE_ID}/${DEALS_TABLE}/${editingRecordId}?returnFieldsByFieldId=true`, {
+      method: 'PATCH',
+      headers: getHeaders(),
+      body: JSON.stringify({ fields, typecast: true })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      const errMsg = data.error?.message || JSON.stringify(data.error) || 'Unknown error';
+      throw new Error(errMsg);
+    }
+    showToast('Deal saved to Airtable ✓');
+    closeDealModal();
+    await syncData();
+  } catch(e) {
+    showToast('Save failed: ' + e.message, 'error');
+    console.error('Save error:', e);
+  }
+}
+
+function resetToken() {
+  localStorage.removeItem('sc_pat');
+  pat = '';
+  document.getElementById('patInput').value = '';
+  document.getElementById('setupBanner').classList.remove('hidden');
+  document.getElementById('setupStatus').textContent = '';
+  showToast('Token cleared — enter new PAT');
+}
+
+function showNewDealModal() {
+  window.open(`https://airtable.com/${BASE_ID}/${DEALS_TABLE}`, '_blank');
+  showToast('Opening Airtable to create new deal →');
+}
+
+// Init
+window.addEventListener('DOMContentLoaded', () => {
+  if (pat) {
+    document.getElementById('patInput').value = pat;
+    syncData();
+  }
+});
+</script>
+</body>
+</html>

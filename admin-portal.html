@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sampson Commercial — Admin Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #001A4C; --blue: #265CFF; --orange: #FF9E59; --light: #EDF2F7;
+  --gray-100: #F7F9FC; --gray-200: #E8ECF2; --gray-300: #C8D0DC;
+  --gray-500: #6B7A8D; --gray-700: #374151; --green: #16a34a;
+  --red: #dc2626; --font-head: 'Poppins',sans-serif; --font-body: 'Inter',sans-serif;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:var(--font-body); background:var(--gray-100); color:var(--gray-700); min-height:100vh; display:flex; flex-direction:column; }
+
+.header { background:var(--navy); padding:0 2rem; display:flex; align-items:center; justify-content:space-between; height:60px; flex-shrink:0; }
+.header-brand { display:flex; align-items:center; gap:12px; }
+.header-logo { width:32px; height:32px; background:var(--blue); border-radius:6px; display:flex; align-items:center; justify-content:center; }
+.header-logo span { color:white; font-family:var(--font-head); font-weight:600; font-size:14px; }
+.header-title { color:white; font-family:var(--font-head); font-weight:600; font-size:15px; }
+.header-sub { color:rgba(255,255,255,0.5); font-size:12px; }
+.header-right { display:flex; align-items:center; gap:10px; }
+.btn-sm { padding:6px 14px; border-radius:6px; font-size:12px; font-weight:500; cursor:pointer; font-family:var(--font-body); border:none; }
+.btn-orange { background:var(--orange); color:var(--navy); }
+.btn-ghost { background:rgba(255,255,255,0.1); color:white; border:1px solid rgba(255,255,255,0.2); }
+.btn-ghost:hover { background:rgba(255,255,255,0.18); }
+
+.setup-banner { background:var(--navy); border-bottom:3px solid var(--orange); padding:1.25rem 2rem; display:flex; align-items:flex-start; gap:1rem; }
+.setup-banner.hidden { display:none; }
+.setup-content h3 { color:white; font-family:var(--font-head); font-size:14px; font-weight:600; margin-bottom:6px; }
+.setup-fields { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; }
+.setup-field { display:flex; flex-direction:column; gap:4px; }
+.setup-field label { color:rgba(255,255,255,0.6); font-size:11px; text-transform:uppercase; letter-spacing:0.06em; }
+.setup-field input { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.25); color:white; padding:7px 12px; border-radius:6px; font-size:13px; font-family:var(--font-body); width:300px; }
+.setup-field input:focus { outline:none; border-color:var(--blue); }
+.btn-connect { background:var(--orange); color:var(--navy); border:none; padding:8px 18px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; }
+.setup-status { font-size:12px; margin-top:6px; }
+.setup-status.ok { color:#4ade80; } .setup-status.err { color:#f87171; }
+
+.layout { display:flex; flex:1; overflow:hidden; }
+.sidebar { width:220px; background:white; border-right:1px solid var(--gray-200); flex-shrink:0; padding:1rem 0; overflow-y:auto; }
+.sidebar-section { padding:0 12px; margin-bottom:1rem; }
+.sidebar-label { font-size:10px; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.07em; padding:0 8px; margin-bottom:6px; }
+.nav-item { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:13px; color:var(--gray-700); transition:all 0.15s; margin-bottom:2px; }
+.nav-item:hover { background:var(--gray-100); }
+.nav-item.active { background:var(--navy); color:white; }
+.nav-item .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.nav-sep { height:1px; background:var(--gray-200); margin:8px 12px; }
+
+.main { flex:1; overflow-y:auto; padding:1.5rem 2rem; }
+.page { display:none; }
+.page.active { display:block; }
+
+.page-header { margin-bottom:1.5rem; }
+.page-title { font-family:var(--font-head); font-size:20px; font-weight:600; color:var(--navy); }
+.page-sub { font-size:13px; color:var(--gray-500); margin-top:3px; }
+
+.cards-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-bottom:1.5rem; }
+.metric-card { background:white; border:1px solid var(--gray-200); border-radius:10px; padding:16px; }
+.metric-card.alert { border-color:var(--red); background:#fff5f5; }
+.metric-card.good { border-color:#86efac; background:#f0fdf4; }
+.metric-label { font-size:11px; color:var(--gray-500); font-weight:500; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
+.metric-value { font-size:26px; font-family:var(--font-head); font-weight:600; color:var(--navy); }
+.metric-card.alert .metric-value { color:var(--red); }
+.metric-card.good .metric-value { color:var(--green); }
+.metric-sub { font-size:11px; color:var(--gray-500); margin-top:3px; }
+
+.section-title { font-family:var(--font-head); font-size:14px; font-weight:600; color:var(--navy); margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; }
+.card { background:white; border:1px solid var(--gray-200); border-radius:10px; margin-bottom:1rem; overflow:hidden; }
+.card-header { padding:14px 16px; border-bottom:1px solid var(--gray-200); display:flex; align-items:center; justify-content:space-between; }
+.card-title { font-size:14px; font-weight:600; color:var(--navy); font-family:var(--font-head); }
+.card-body { padding:16px; }
+
+.property-card { background:white; border:1px solid var(--gray-200); border-radius:10px; padding:16px; margin-bottom:10px; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:space-between; }
+.property-card:hover { border-color:var(--blue); box-shadow:0 2px 8px rgba(38,92,255,0.1); }
+.property-card.selected { border-color:var(--blue); background:#f0f4ff; }
+.prop-name { font-size:14px; font-weight:600; color:var(--navy); margin-bottom:4px; }
+.prop-meta { font-size:12px; color:var(--gray-500); }
+.prop-badges { display:flex; gap:6px; margin-top:6px; flex-wrap:wrap; }
+.badge { font-size:10px; font-weight:500; padding:2px 8px; border-radius:10px; }
+.badge-pr { background:#f0fdf4; color:#15803d; }
+.badge-fl { background:#eff6ff; color:#1d4ed8; }
+.badge-type { background:var(--light); color:var(--navy); }
+.badge-status-active { background:#eff6ff; color:#1d4ed8; }
+.badge-status-listing { background:#f0fdf4; color:#15803d; }
+
+.prop-right { text-align:right; }
+.prop-price { font-size:14px; font-weight:600; color:var(--navy); }
+.prop-size { font-size:12px; color:var(--gray-500); }
+
+.detail-panel { background:white; border:1px solid var(--gray-200); border-radius:10px; padding:0; overflow:hidden; }
+.detail-tabs { display:flex; border-bottom:1px solid var(--gray-200); background:var(--gray-100); }
+.detail-tab { padding:10px 16px; font-size:13px; font-weight:500; cursor:pointer; border:none; background:none; color:var(--gray-500); border-bottom:2px solid transparent; margin-bottom:-1px; }
+.detail-tab.active { color:var(--navy); border-bottom-color:var(--navy); background:white; }
+.detail-content { padding:16px; display:none; }
+.detail-content.active { display:block; }
+
+.stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:1rem; }
+.stat-box { background:var(--gray-100); border-radius:8px; padding:12px; text-align:center; }
+.stat-num { font-size:20px; font-weight:600; color:var(--navy); font-family:var(--font-head); }
+.stat-lbl { font-size:11px; color:var(--gray-500); margin-top:2px; }
+
+.table { width:100%; border-collapse:collapse; font-size:13px; }
+.table th { text-align:left; padding:8px 10px; font-size:11px; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.05em; border-bottom:1px solid var(--gray-200); }
+.table td { padding:10px; border-bottom:1px solid var(--gray-200); vertical-align:middle; }
+.table tr:last-child td { border-bottom:none; }
+.table tr:hover td { background:var(--gray-100); }
+
+.client-link-box { background:var(--gray-100); border:1px solid var(--gray-200); border-radius:8px; padding:12px 14px; display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.client-link-url { font-size:12px; color:var(--blue); font-family:monospace; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.btn-copy { background:var(--navy); color:white; border:none; padding:5px 12px; border-radius:5px; font-size:11px; cursor:pointer; }
+.btn-copy:hover { opacity:0.85; }
+
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.form-field { display:flex; flex-direction:column; gap:4px; }
+.form-field.full { grid-column:1/-1; }
+.form-field label { font-size:11px; color:var(--gray-500); font-weight:500; }
+.form-field input, .form-field select, .form-field textarea { border:1px solid var(--gray-200); border-radius:6px; padding:8px 10px; font-size:13px; font-family:var(--font-body); color:var(--gray-700); }
+.form-field input:focus, .form-field select:focus { outline:none; border-color:var(--blue); }
+.form-field textarea { resize:vertical; min-height:70px; }
+.btn-save { background:var(--navy); color:white; border:none; padding:9px 20px; border-radius:6px; font-size:13px; font-weight:500; cursor:pointer; margin-top:12px; }
+.btn-save:hover { opacity:0.85; }
+
+.activity-item { padding:10px 0; border-bottom:1px solid var(--gray-200); display:flex; gap:10px; }
+.activity-item:last-child { border-bottom:none; }
+.activity-dot { width:8px; height:8px; border-radius:50%; background:var(--blue); flex-shrink:0; margin-top:5px; }
+.activity-text { font-size:13px; color:var(--gray-700); }
+.activity-date { font-size:11px; color:var(--gray-500); margin-top:2px; }
+
+.empty-state { text-align:center; padding:2rem; color:var(--gray-500); font-size:13px; }
+.spinner { width:28px; height:28px; border:3px solid var(--gray-200); border-top-color:var(--blue); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 10px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.loading { padding:2rem; text-align:center; color:var(--gray-500); font-size:13px; }
+
+.platform-row { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--gray-200); }
+.platform-row:last-child { border-bottom:none; }
+.platform-name { font-size:13px; font-weight:500; display:flex; align-items:center; gap:8px; }
+.platform-dot { width:8px; height:8px; border-radius:50%; }
+.platform-stats { display:flex; gap:20px; font-size:12px; color:var(--gray-500); }
+.platform-stat strong { color:var(--navy); }
+
+.toast { position:fixed; bottom:24px; right:24px; background:var(--navy); color:white; padding:12px 18px; border-radius:8px; font-size:13px; z-index:300; transform:translateY(60px); opacity:0; transition:all 0.3s; }
+.toast.show { transform:translateY(0); opacity:1; }
+.toast.success { border-left:4px solid #4ade80; }
+.toast.error { border-left:4px solid #f87171; }
+
+.two-col { display:grid; grid-template-columns:300px 1fr; gap:1rem; }
+@media(max-width:900px) { .two-col { grid-template-columns:1fr; } .layout { flex-direction:column; } .sidebar { width:100%; border-right:none; border-bottom:1px solid var(--gray-200); } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="header-logo"><span>SC</span></div>
+    <div>
+      <div class="header-title">Sampson Commercial</div>
+      <div class="header-sub">Admin Portal</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="btn-sm btn-ghost" onclick="resetToken()">⚙ Token</button>
+    <button class="btn-sm btn-orange" onclick="syncAll()">↻ Sync</button>
+  </div>
+</div>
+
+<div class="setup-banner" id="setupBanner">
+  <div class="setup-content">
+    <h3>Connect Airtable</h3>
+    <div class="setup-fields">
+      <div class="setup-field">
+        <label>Personal Access Token</label>
+        <input type="password" id="patInput" placeholder="patxxxxxxxxxxxxxxxx..." />
+      </div>
+      <button class="btn-connect" onclick="saveToken()">Connect →</button>
+    </div>
+    <div class="setup-status" id="setupStatus"></div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Overview</div>
+      <div class="nav-item active" onclick="showPage('dashboard',this)">📊 Dashboard</div>
+      <div class="nav-item" onclick="showPage('properties',this)">🏢 Properties</div>
+      <div class="nav-item" onclick="showPage('clients',this)">👥 Client Links</div>
+    </div>
+    <div class="nav-sep"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Priority Properties</div>
+      <div class="nav-item" onclick="showPropertyDetail('Exit 24',this)"><span class="dot" style="background:#265CFF"></span>Exit 24 — Dorado</div>
+      <div class="nav-item" onclick="showPropertyDetail('Ceiba Ferry',this)"><span class="dot" style="background:#FF9E59"></span>Ceiba Ferry Terminal</div>
+      <div class="nav-item" onclick="showPropertyDetail('Union Plaza',this)"><span class="dot" style="background:#16a34a"></span>Union Plaza</div>
+      <div class="nav-item" onclick="showPropertyDetail('Canton Mall',this)"><span class="dot" style="background:#8b5cf6"></span>Canton Mall</div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub">All active assignments — Puerto Rico & Florida</div>
+      </div>
+      <div class="cards-grid" id="dashCards">
+        <div class="loading"><div class="spinner"></div>Loading...</div>
+      </div>
+      <div class="section-title">Active Assignments</div>
+      <div id="dashProperties"><div class="loading"><div class="spinner"></div></div></div>
+    </div>
+
+    <!-- PROPERTIES -->
+    <div class="page" id="page-properties">
+      <div class="page-header">
+        <div class="page-title">All Properties</div>
+        <div class="page-sub">Airtable — Properties table</div>
+      </div>
+      <div id="allPropertiesList"><div class="loading"><div class="spinner"></div></div></div>
+    </div>
+
+    <!-- CLIENT LINKS -->
+    <div class="page" id="page-clients">
+      <div class="page-header">
+        <div class="page-title">Client Portal Links</div>
+        <div class="page-sub">Share these links with clients — no login required</div>
+      </div>
+      <div id="clientLinksList"></div>
+    </div>
+
+    <!-- PROPERTY DETAIL -->
+    <div class="page" id="page-property-detail">
+      <div class="page-header">
+        <div class="page-title" id="detailPropName">Property</div>
+        <div class="page-sub" id="detailPropSub"></div>
+      </div>
+      <div class="detail-panel">
+        <div class="detail-tabs">
+          <button class="detail-tab active" onclick="switchDetailTab('overview',this)">Overview</button>
+          <button class="detail-tab" onclick="switchDetailTab('marketing',this)">Marketing Stats</button>
+          <button class="detail-tab" onclick="switchDetailTab('prospects',this)">Prospects / Deals</button>
+          <button class="detail-tab" onclick="switchDetailTab('update',this)">Post Update</button>
+        </div>
+        <div class="detail-content active" id="detail-overview">
+          <div class="stats-grid" id="detailStats"></div>
+          <div id="detailActivityFeed"></div>
+        </div>
+        <div class="detail-content" id="detail-marketing">
+          <div id="detailMarketing"></div>
+        </div>
+        <div class="detail-content" id="detail-prospects">
+          <div id="detailProspects"></div>
+        </div>
+        <div class="detail-content" id="detail-update">
+          <div class="form-grid">
+            <div class="form-field full">
+              <label>Update / Activity Note</label>
+              <textarea id="updateNote" rows="4" placeholder="e.g. Toured Unit 3 with La Parrilla group — strong interest, requesting LOI..."></textarea>
+            </div>
+            <div class="form-field">
+              <label>Type</label>
+              <select id="updateType">
+                <option>Tour / Site Visit</option>
+                <option>LOI Received</option>
+                <option>LOI Sent</option>
+                <option>Prospect Inquiry</option>
+                <option>Lease Executed</option>
+                <option>Marketing Update</option>
+                <option>General Update</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Date</label>
+              <input type="date" id="updateDate" />
+            </div>
+          </div>
+          <button class="btn-save" onclick="postUpdate()">Post Update to Airtable</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const BASE_ID = 'appuE12tiGsHtfLuR';
+const TABLES = {
+  properties: 'tble75Hvhs5WVI26t',
+  deals: 'tblfqQb0kbBZm0w51',
+  activities: 'tblpRnPPxCVrSJsYs',
+  marketingStats: 'tblLYJ5x2NSTV90Ds',
+  leads: 'tblEJNkBNzW9YpPoH',
+};
+const AT_API = 'https://api.airtable.com/v0';
+const PORTAL_BASE_URL = window.location.origin + '/client-portal.html';
+
+const PRIORITY_PROPS = ['Exit 24', 'Ceiba Ferry', 'Union Plaza', 'Canton Mall'];
+const PRIORITY_FULL = {
+  'Exit 24': 'Exit 24 — Dorado Retail Development',
+  'Ceiba Ferry': 'Ceiba Ferry Terminal',
+  'Union Plaza': 'Union Plaza — Hato Rey',
+  'Canton Mall': 'Canton Mall — Bayamón'
+};
+const PRIORITY_COLORS = { 'Exit 24':'#265CFF','Ceiba Ferry':'#FF9E59','Union Plaza':'#16a34a','Canton Mall':'#8b5cf6' };
+const CLIENT_IDS = {
+  'Exit 24': 'exit24-dorado-2024',
+  'Ceiba Ferry': 'ceiba-ferry-hms-2024',
+  'Union Plaza': 'union-plaza-ed-2024',
+  'Canton Mall': 'canton-mall-bayamon-2024'
+};
+
+let pat = localStorage.getItem('sc_pat') || '';
+let allProperties = [], allDeals = [], allActivities = [], allMarketing = [], allLeads = [];
+let currentDetailProp = null;
+
+function getHeaders() { return { 'Authorization': `Bearer ${pat}`, 'Content-Type': 'application/json' }; }
+
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast ${type} show`;
+  setTimeout(() => t.className='toast', 3000);
+}
+
+function saveToken() {
+  const val = document.getElementById('patInput').value.trim();
+  if (!val) return;
+  pat = val; localStorage.setItem('sc_pat', val);
+  document.getElementById('setupStatus').className = 'setup-status ok';
+  document.getElementById('setupStatus').textContent = 'Connecting...';
+  syncAll();
+}
+
+function resetToken() {
+  localStorage.removeItem('sc_pat'); pat = '';
+  document.getElementById('patInput').value = '';
+  document.getElementById('setupBanner').classList.remove('hidden');
+  document.getElementById('setupStatus').textContent = '';
+}
+
+function hideBanner() { document.getElementById('setupBanner').classList.add('hidden'); }
+
+async function fetchAll(tableId, fieldIds) {
+  let records = [], offset = null;
+  do {
+    let url = `${AT_API}/${BASE_ID}/${tableId}?pageSize=100&returnFieldsByFieldId=true`;
+    if (fieldIds) url += '&' + fieldIds.map(f=>`fields[]=${f}`).join('&');
+    if (offset) url += `&offset=${offset}`;
+    const res = await fetch(url, { headers: getHeaders() });
+    if (!res.ok) throw new Error((await res.json()).error?.message || 'API error');
+    const data = await res.json();
+    records = records.concat(data.records);
+    offset = data.offset;
+  } while (offset);
+  return records;
+}
+
+async function syncAll() {
+  if (!pat) return;
+  try {
+    const [props, deals, acts, mkt, leads] = await Promise.all([
+      fetchAll(TABLES.properties),
+      fetchAll(TABLES.deals),
+      fetchAll(TABLES.activities),
+      fetchAll(TABLES.marketingStats),
+      fetchAll(TABLES.leads),
+    ]);
+    allProperties = props; allDeals = deals; allActivities = acts;
+    allMarketing = mkt; allLeads = leads;
+    hideBanner();
+    renderDashboard();
+    renderAllProperties();
+    renderClientLinks();
+    showToast(`Synced — ${props.length} properties, ${deals.length} deals`);
+  } catch(e) {
+    document.getElementById('setupStatus').className = 'setup-status err';
+    document.getElementById('setupStatus').textContent = '✗ ' + e.message;
+    showToast('Sync failed: ' + e.message, 'error');
+  }
+}
+
+function fv(record, fieldId) {
+  const f = record.fields || record.cellValuesByFieldId || {};
+  const v = f[fieldId];
+  if (v && typeof v === 'object' && v.name) return v.name;
+  return v;
+}
+
+function fmt$(v) { if (!v) return '—'; return '$'+Number(v).toLocaleString('en-US',{maximumFractionDigits:0}); }
+function fmtDate(d) { if (!d) return '—'; return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+
+function renderDashboard() {
+  const activeDeals = allDeals.filter(d => !['Closed','Dead'].includes(fv(d,'fldnueQJxWwypnCVJ')));
+  const activeProps = allProperties.filter(p => fv(p,'fldSnPz8yyqnp8is7') === 'Active');
+  const totalLeads = allLeads.length;
+  const totalViews = allMarketing.reduce((s,m) => s + (fv(m,'fldNhlAKjP76MJhb8')||0) + (fv(m,'fldrjxv8WqwPX6dWe')||0), 0);
+
+  document.getElementById('dashCards').innerHTML = `
+    <div class="metric-card"><div class="metric-label">Active Properties</div><div class="metric-value">${activeProps.length}</div><div class="metric-sub">In Airtable</div></div>
+    <div class="metric-card"><div class="metric-label">Active Deals</div><div class="metric-value">${activeDeals.length}</div><div class="metric-sub">Pipeline</div></div>
+    <div class="metric-card"><div class="metric-label">Total Leads</div><div class="metric-value">${totalLeads}</div><div class="metric-sub">Across all listings</div></div>
+    <div class="metric-card"><div class="metric-label">Total Views</div><div class="metric-value">${totalViews}</div><div class="metric-sub">Crexi + TotalCommercial</div></div>
+    <div class="metric-card"><div class="metric-label">Client Portals</div><div class="metric-value">4</div><div class="metric-sub">Active assignments</div></div>`;
+
+  document.getElementById('dashProperties').innerHTML = PRIORITY_PROPS.map(key => {
+    const prop = allProperties.find(p => (fv(p,'fldpn9sifUUTV8jmb')||'').toLowerCase().includes(key.toLowerCase().split(' ')[0]));
+    const color = PRIORITY_COLORS[key];
+    const deals = allDeals.filter(d => fv(d,'fldwx2kEFyoudmE4m')?.toLowerCase().includes(key.toLowerCase().split(' ')[0]));
+    const leads = allLeads.filter(l => (fv(l,'fldoSNNBoDrMiwh3Y')||'').toLowerCase().includes(key.toLowerCase().split(' ')[0]));
+    return `<div class="property-card" onclick="showPropertyDetail('${key}',null)" style="border-left:4px solid ${color}">
+      <div>
+        <div class="prop-name">${PRIORITY_FULL[key]}</div>
+        <div class="prop-meta">${prop ? (fv(prop,'fld3qzwSpJASfkZ3r')||'') + ' · ' + (fv(prop,'fld8ubzef720mR1qa')||'') : 'Puerto Rico'}</div>
+        <div class="prop-badges">
+          <span class="badge badge-pr">Puerto Rico</span>
+          <span class="badge badge-type">${deals.length} deal${deals.length!==1?'s':''}</span>
+          <span class="badge badge-type">${leads.length} lead${leads.length!==1?'s':''}</span>
+        </div>
+      </div>
+      <div class="prop-right">
+        ${prop ? `<div class="prop-price">${fmt$(fv(prop,'fldhQ06nbrn8PuoPA'))}</div><div class="prop-size">${fv(prop,'fldxoT36S88BWYQu8') ? Number(fv(prop,'fldxoT36S88BWYQu8')).toLocaleString()+' SF' : ''}</div>` : ''}
+        <div style="font-size:11px;color:var(--blue);margin-top:6px;">View detail →</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderAllProperties() {
+  document.getElementById('allPropertiesList').innerHTML = allProperties.map(p => {
+    const name = fv(p,'fldpn9sifUUTV8jmb') || 'Untitled';
+    const city = fv(p,'fld3qzwSpJASfkZ3r') || '';
+    const type = fv(p,'fld8ubzef720mR1qa') || '';
+    const status = fv(p,'fldSnPz8yyqnp8is7') || '';
+    const price = fv(p,'fldhQ06nbrn8PuoPA');
+    const sf = fv(p,'fldxoT36S88BWYQu8');
+    const rate = fv(p,'fldrYx5rxD16LD2qC');
+    return `<div class="property-card">
+      <div>
+        <div class="prop-name">${name}</div>
+        <div class="prop-meta">${city} · ${type}</div>
+        <div class="prop-badges">
+          <span class="badge badge-pr">PR</span>
+          <span class="badge badge-type">${type}</span>
+          <span class="badge ${status==='Active'?'badge-status-active':'badge-status-listing'}">${status}</span>
+        </div>
+      </div>
+      <div class="prop-right">
+        <div class="prop-price">${price ? fmt$(price) : (rate ? '$'+rate+'/SF' : '—')}</div>
+        <div class="prop-size">${sf ? Number(sf).toLocaleString()+' SF' : ''}</div>
+      </div>
+    </div>`;
+  }).join('') || '<div class="empty-state">No properties loaded</div>';
+}
+
+function renderClientLinks() {
+  const baseUrl = window.location.href.replace('admin-portal.html','client-portal.html');
+  document.getElementById('clientLinksList').innerHTML = PRIORITY_PROPS.map(key => {
+    const id = CLIENT_IDS[key];
+    const url = `${baseUrl}?client=${id}`;
+    return `<div class="card" style="margin-bottom:12px;">
+      <div class="card-header">
+        <div class="card-title">${PRIORITY_FULL[key]}</div>
+        <span class="badge badge-type" style="font-size:11px">ID: ${id}</span>
+      </div>
+      <div class="card-body">
+        <div class="client-link-box">
+          <div class="client-link-url" id="url-${id}">${url}</div>
+          <button class="btn-copy" onclick="copyLink('${id}','${url}')">Copy</button>
+        </div>
+        <div style="font-size:12px;color:var(--gray-500)">Send this link to the client. They see only their property data. No login required.</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function copyLink(id, url) {
+  navigator.clipboard.writeText(url).then(() => showToast('Link copied to clipboard ✓'));
+}
+
+function showPage(pageId, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+pageId)?.classList.add('active');
+  if (navEl) navEl.classList.add('active');
+}
+
+function showPropertyDetail(key, navEl) {
+  currentDetailProp = key;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-property-detail').classList.add('active');
+  if (navEl) navEl.classList.add('active');
+
+  document.getElementById('detailPropName').textContent = PRIORITY_FULL[key];
+  const prop = allProperties.find(p => (fv(p,'fldpn9sifUUTV8jmb')||'').toLowerCase().includes(key.toLowerCase().split(' ')[0]));
+  document.getElementById('detailPropSub').textContent = prop ? (fv(prop,'flddosmCbsmj7hYuM')||'') + ' · ' + (fv(prop,'fld3qzwSpJASfkZ3r')||'') : '';
+
+  // Set today's date
+  document.getElementById('updateDate').value = new Date().toISOString().split('T')[0];
+
+  renderDetailOverview(key, prop);
+  renderDetailMarketing(key, prop);
+  renderDetailProspects(key);
+}
+
+function renderDetailOverview(key, prop) {
+  const leads = allLeads.filter(l => (fv(l,'fldoSNNBoDrMiwh3Y')||fv(l,'fldsf8sOdxxcVkF3A')||'').toLowerCase().includes(key.toLowerCase().split(' ')[0]));
+  const deals = allDeals.filter(d => (fv(d,'fldwx2kEFyoudmE4m')||'').toLowerCase().includes(key.toLowerCase().split(' ')[0]));
+  const mkt = allMarketing.filter(m => (fv(m,'fldEntry')||fv(m,'fldhJeEgZ26O5oJjA')||'').toLowerCase().includes(key.toLowerCase().split(' ')[0]));
+  const totalViews = mkt.reduce((s,m) => s+(fv(m,'fldNhlAKjP76MJhb8')||0)+(fv(m,'fldrjxv8WqwPX6dWe')||0),0);
+  const totalInquiries = mkt.reduce((s,m) => s+(fv(m,'fldpqwFmuHgVEOwMU')||0),0);
+
+  document.getElementById('detailStats').innerHTML = `
+    <div class="stat-box"><div class="stat-num">${leads.length}</div><div class="stat-lbl">Total Leads</div></div>
+    <div class="stat-box"><div class="stat-num">${deals.length}</div><div class="stat-lbl">Active Deals</div></div>
+    <div class="stat-box"><div class="stat-num">${totalViews}</div><div class="stat-lbl">Total Views</div></div>
+    <div class="stat-box"><div class="stat-num">${totalInquiries}</div><div class="stat-lbl">Inquiries</div></div>
+    <div class="stat-box"><div class="stat-num">${prop ? (fv(prop,'fldxoT36S88BWYQu8') ? Number(fv(prop,'fldxoT36S88BWYQu8')).toLocaleString()+' SF' : '—') : '—'}</div><div class="stat-lbl">Total SF</div></div>
+    <div class="stat-box"><div class="stat-num">${prop ? (fv(prop,'fldhQ06nbrn8PuoPA') ? '$'+Number(fv(prop,'fldhQ06nbrn8PuoPA')/1000000).toFixed(1)+'M' : '—') : '—'}</div><div class="stat-lbl">Asking Price</div></div>`;
+
+  const recentActs = allActivities.slice(0,10);
+  document.getElementById('detailActivityFeed').innerHTML = `
+    <div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Recent Activity</div>
+    ${recentActs.length ? recentActs.map(a => `
+      <div class="activity-item">
+        <div class="activity-dot"></div>
+        <div>
+          <div class="activity-text">${fv(a,'fldTCNZaWYNgVhYjb')||'Activity logged'}</div>
+          <div class="activity-date">${fv(a,'fldOCdpm5wYututlT') ? new Date(fv(a,'fldOCdpm5wYututlT')).toLocaleDateString() : '—'} · ${fv(a,'fld3bRwf1ooXKs2Uq')||''}</div>
+        </div>
+      </div>`).join('') : '<div class="empty-state">No activity logged yet</div>'}`;
+}
+
+function renderDetailMarketing(key, prop) {
+  const mkt = allMarketing.filter(m => (fv(m,'fldhJeEgZ26O5oJjA')||'').toLowerCase().includes(key.toLowerCase().split(' ')[0]));
+  const totalViews    = mkt.reduce((s,m)=>s+(fv(m,'fldNhlAKjP76MJhb8')||0)+(fv(m,'fldrjxv8WqwPX6dWe')||0)+(fv(m,'fldZFOi21rG1kPExq')||0)+(fv(m,'fld6BQzXkM8MWzU3b')||0),0);
+  const totalDL       = mkt.reduce((s,m)=>s+(fv(m,'fldEjXoXBjaclcYf4')||0),0);
+  const totalInq      = mkt.reduce((s,m)=>s+(fv(m,'fldpqwFmuHgVEOwMU')||0),0);
+  const totalTours    = mkt.reduce((s,m)=>s+(fv(m,'fldY6H2ShZbnJPDI3')||0),0);
+  const totalLOIs     = mkt.reduce((s,m)=>s+(fv(m,'fldGEdf4F1OfRjKD5')||0),0);
+  const totalOutreach = mkt.reduce((s,m)=>s+(fv(m,'fldehDyUOXHDLpenn')||0),0);
+  const totalSign     = mkt.reduce((s,m)=>s+(fv(m,'fldqHrbFre7NK2k4C')||0),0);
+
+  document.getElementById('detailMarketing').innerHTML = `
+    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:1rem">
+      <div class="stat-box"><div class="stat-num">${totalViews}</div><div class="stat-lbl">Total Views</div></div>
+      <div class="stat-box"><div class="stat-num">${totalDL}</div><div class="stat-lbl">OM Downloads</div></div>
+      <div class="stat-box"><div class="stat-num">${totalInq}</div><div class="stat-lbl">Inquiries</div></div>
+      <div class="stat-box"><div class="stat-num">${totalOutreach}</div><div class="stat-lbl">Broker Outreach</div></div>
+      <div class="stat-box"><div class="stat-num">${totalTours}</div><div class="stat-lbl">Site Visits</div></div>
+      <div class="stat-box"><div class="stat-num">${totalLOIs}</div><div class="stat-lbl">LOIs</div></div>
+      <div class="stat-box"><div class="stat-num">${totalSign}</div><div class="stat-lbl">Sign Calls</div></div>
+    </div>
+    ${mkt.length === 0 ? '<div class="empty-state">No marketing stats logged yet.<br>Add entries in Airtable → Marketing Stats table.</div>' : ''}`;
+}
+
+function renderDetailProspects(key) {
+  const leads = allLeads.filter(l => {
+    const linked = fv(l,'fld0nXW1efRMaab01');
+    const name = fv(l,'fldsf8sOdxxcVkF3A')||'';
+    return name.toLowerCase().includes(key.toLowerCase().split(' ')[0]) || (Array.isArray(linked) && linked.length);
+  });
+  const deals = allDeals.filter(d => (fv(d,'fldwx2kEFyoudmE4m')||'').toLowerCase().includes(key.toLowerCase().split(' ')[0]));
+
+  document.getElementById('detailProspects').innerHTML = `
+    <div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px">Active Deals</div>
+    ${deals.length ? `<table class="table"><thead><tr><th>Deal</th><th>Stage</th><th>Net Commission</th><th>Next Action</th></tr></thead><tbody>
+      ${deals.map(d=>`<tr>
+        <td style="font-weight:500">${fv(d,'fldwx2kEFyoudmE4m')}</td>
+        <td>${fv(d,'fldnueQJxWwypnCVJ')||'—'}</td>
+        <td>${fmt$(fv(d,'fld0I5PcXaTnv5QCc'))}</td>
+        <td style="font-size:12px;color:var(--gray-500)">${fv(d,'fld0lEDuwNkyeMjIQ')||'—'}</td>
+      </tr>`).join('')}
+    </tbody></table>` : '<div class="empty-state">No deals linked to this property</div>'}
+    <div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;margin:1rem 0 10px">Leads / Inquiries</div>
+    ${leads.length ? `<table class="table"><thead><tr><th>Name</th><th>Source</th><th>Date</th><th>Status</th><th>Interest</th></tr></thead><tbody>
+      ${leads.map(l=>`<tr>
+        <td style="font-weight:500">${fv(l,'fldsf8sOdxxcVkF3A')||'—'}</td>
+        <td>${fv(l,'fldJPwkvogQLXvTBp')||'—'}</td>
+        <td>${fmtDate(fv(l,'fldxckDZlB43PyOPJ'))}</td>
+        <td>${fv(l,'fldAPaqOlD7oY50dN')||'—'}</td>
+        <td>${fv(l,'fldC6AJFdnpMTS6hG')||'—'}</td>
+      </tr>`).join('')}
+    </tbody></table>` : '<div class="empty-state">No leads logged yet</div>'}`;
+}
+
+function switchDetailTab(tab, btn) {
+  document.querySelectorAll('.detail-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.detail-content').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('detail-'+tab).classList.add('active');
+}
+
+async function postUpdate() {
+  const note = document.getElementById('updateNote').value.trim();
+  const type = document.getElementById('updateType').value;
+  const date = document.getElementById('updateDate').value;
+  if (!note) { showToast('Enter an update note first','error'); return; }
+
+  try {
+    const res = await fetch(`${AT_API}/${BASE_ID}/${TABLES.activities}`, {
+      method:'POST', headers:getHeaders(),
+      body: JSON.stringify({ records:[{ fields:{
+        'fldTCNZaWYNgVhYjb': `${currentDetailProp} — ${note}`,
+        'fld3bRwf1ooXKs2Uq': type,
+        'fldOCdpm5wYututlT': date ? date+'T12:00:00.000Z' : new Date().toISOString(),
+      }}], typecast:true })
+    });
+    if (!res.ok) throw new Error((await res.json()).error?.message||'Failed');
+    showToast('Update posted to Airtable ✓');
+    document.getElementById('updateNote').value = '';
+    await syncAll();
+  } catch(e) { showToast('Failed: '+e.message,'error'); }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (pat) { document.getElementById('patInput').value = pat; syncAll(); }
+  document.getElementById('updateDate').value = new Date().toISOString().split('T')[0];
+});
+</script>
+</body>
+</html>
