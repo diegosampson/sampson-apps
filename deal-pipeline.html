@@ -353,6 +353,12 @@
     </select>
   </div>
   <div class="toolbar-right">
+    <button class="sync-btn" id="archiveToggle" onclick="toggleArchived()" title="Show/hide archived deals">
+      📦 Show Archived
+    </button>
+    <button class="sync-btn" id="archiveBtn" onclick="toggleArchived()" title="Show/hide archived deals">
+      <span>📦</span> Archived
+    </button>
     <span class="last-sync" id="lastSync">Not synced</span>
     <button class="sync-btn" id="syncBtn" onclick="syncData()">
       <span>↻</span> Refresh
@@ -542,7 +548,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn-danger" onclick="closeDealModal()">Cancel</button>
+      <button class="btn-danger" id="btnArchive" onclick="archiveDeal()">Archive</button>
       <button class="btn-cancel" onclick="closeDealModal()">Close</button>
       <button class="btn-save" onclick="saveDeal()">Save to Airtable</button>
     </div>
@@ -586,6 +592,7 @@ const FIELDS = {
   seller:     'flddutxvSzn82zN3V',
   role:       'fldN9zV0pMje3wGzA',
   commStatus: 'fld0wOKZMSSqao7i5',
+  archived: 'Archived',
   commCollected: 'fldx9s1DJLt2uIX2h',
   commBalance: 'flddN4vLhDi2FNFRI',
   commDueDate: 'fld9k4NoBQ9UzFqh6',
@@ -596,6 +603,7 @@ let allDeals = [];
 let filteredDeals = [];
 let currentView = 'kanban';
 let editingRecordId = null;
+let showArchived = false;
 let pat = localStorage.getItem('sc_pat') || '';
 
 function getHeaders() {
@@ -700,10 +708,12 @@ async function syncData() {
         seller: f[FIELDS.seller] || '',
         role: f[FIELDS.role]?.name || f[FIELDS.role] || '',
         commStatus: f[FIELDS.commStatus]?.name || f[FIELDS.commStatus] || '',
+        archived: f['Archived'] || f[FIELDS.archived] || false,
         commCollected: f[FIELDS.commCollected] || 0,
         commBalance: f[FIELDS.commBalance] || 0,
         commDueDate: f[FIELDS.commDueDate] || '',
         rentStart: f[FIELDS.rentStart] || '',
+        archived: f[FIELDS.archived] || false,
       };
     });
 
@@ -731,6 +741,7 @@ function applyFilters() {
   const type = document.getElementById('filterType').value;
 
   filteredDeals = allDeals.filter(d => {
+    if (!showArchived && d.archived) return false;
     if (market && d.market !== market) return false;
     if (type && !d.dealType.includes(type)) return false;
     if (currentView === 'stale') return daysSince(d.nextDate) >= 7 && d.stage !== 'Closed' && d.stage !== 'Dead';
@@ -933,6 +944,11 @@ function openDeal(id) {
 
   document.getElementById('modalTitle').textContent = deal.name;
   document.getElementById('modalAirtableLink').href = `https://airtable.com/${BASE_ID}/${DEALS_TABLE}/${id}`;
+
+  // Set archive button
+  const archiveBtn = document.getElementById('btnArchive');
+  archiveBtn.textContent = deal.archived ? 'Unarchive' : 'Archive';
+  archiveBtn.onclick = () => archiveDeal(id, deal.archived);
   document.getElementById('editName').value = deal.name;
   document.getElementById('editStage').value = deal.stage;
   document.getElementById('editMarket').value = deal.market;
@@ -1009,6 +1025,31 @@ async function saveDeal() {
     showToast('Save failed: ' + e.message, 'error');
     console.error('Save error:', e);
   }
+}
+
+function toggleArchived() {
+  showArchived = !showArchived;
+  const btn = document.getElementById('archiveBtn');
+  btn.style.color = showArchived ? 'var(--orange)' : '';
+  btn.style.borderColor = showArchived ? 'var(--orange)' : '';
+  applyFilters();
+  showToast(showArchived ? 'Showing archived deals' : 'Archived deals hidden');
+}
+
+async function archiveDeal() {
+  if (!editingRecordId) return;
+  const deal = allDeals.find(d => d.id === editingRecordId);
+  const isArchived = deal?.archived;
+  try {
+    const res = await fetch(`${AT_API}/${BASE_ID}/${DEALS_TABLE}/${editingRecordId}?returnFieldsByFieldId=true`, {
+      method: 'PATCH', headers: getHeaders(),
+      body: JSON.stringify({ fields: { 'Archived': !isArchived }, typecast: true })
+    });
+    if (!res.ok) throw new Error((await res.json()).error?.message || 'Failed');
+    showToast(isArchived ? 'Deal unarchived ✓' : 'Deal archived ✓');
+    closeDealModal();
+    await syncData();
+  } catch(e) { showToast('Failed: ' + e.message, 'error'); }
 }
 
 function resetToken() {
