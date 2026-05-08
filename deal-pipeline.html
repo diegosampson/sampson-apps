@@ -860,7 +860,7 @@ async function renderCommissions() {
   try {
     let records = [], offset = null;
     do {
-      let url = `${AT_API}/${BASE_ID}/${DEALS_TABLE}?pageSize=100&returnFieldsByFieldId=true&cellFormat=json&filterByFormula=OR({fldnueQJxWwypnCVJ}='Closed',{fldnueQJxWwypnCVJ}='Under Contract')`;
+      let url = `${AT_API}/${BASE_ID}/${DEALS_TABLE}?pageSize=100&returnFieldsByFieldId=true&cellFormat=json` + '&filterByFormula=OR({fldnueQJxWwypnCVJ}=%27Closed%27,{fldnueQJxWwypnCVJ}=%27Under%20Contract%27)';
       if (offset) url += `&offset=${offset}`;
       const res = await fetch(url, { headers: getHeaders() });
       const data = await res.json();
@@ -938,63 +938,6 @@ async function renderCommissions() {
       <td style="color:${isOverdue?'var(--red)':'var(--gray-700)'}">${formatDate(deal.commDueDate)}${isOverdue?' ⚠':''}</td>
       <td>${formatDate(deal.rentStart)}</td>
     </tr>`;
-  }).join('') || '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--gray-500)">No commission records found</td></tr>';
-}
-  const commView = document.getElementById('commissionsView');
-  commView.classList.add('active');
-
-  // Show closed + partial + recent closed (last 12 months of paid)
-  const partial = allDeals.filter(d => d.commStatus === 'Partial');
-  const notCollected = allDeals.filter(d => d.commStatus === 'Not Collected');
-  const recentClosed = allDeals.filter(d => d.stage === 'Closed' && d.commStatus === 'Paid in Full');
-  const display = [...partial, ...notCollected, ...recentClosed];
-
-  // Summary cards
-  const totalBalance = partial.reduce((s, d) => s + (d.myNetComm - d.commCollected), 0);
-  const totalPending = notCollected.reduce((s, d) => s + (d.myNetComm || 0), 0);
-  const totalCollected = recentClosed.reduce((s, d) => s + (d.commCollected || 0), 0);
-
-  document.getElementById('commSummaryCards').innerHTML = `
-    <div class="summary-card alert" style="flex:1">
-      <div class="summary-label">Partial — Balance Due</div>
-      <div class="summary-value">${formatCurrency(totalBalance)}</div>
-      <div class="summary-sub">${partial.length} deal${partial.length !== 1 ? 's' : ''} with open balance</div>
-    </div>
-    <div class="summary-card today" style="flex:1">
-      <div class="summary-label">Not Collected</div>
-      <div class="summary-value">${formatCurrency(totalPending)}</div>
-      <div class="summary-sub">${notCollected.length} deal${notCollected.length !== 1 ? 's' : ''} pending payment</div>
-    </div>
-    <div class="summary-card" style="flex:1">
-      <div class="summary-label">Paid in Full</div>
-      <div class="summary-value" style="color:var(--green)">${formatCurrency(totalCollected)}</div>
-      <div class="summary-sub">${recentClosed.length} deal${recentClosed.length !== 1 ? 's' : ''} closed & paid</div>
-    </div>`;
-
-  const statusColor = {
-    'Partial': { bg: '#fffbeb', text: '#b45309', border: '#fcd34d' },
-    'Not Collected': { bg: '#fef2f2', text: '#dc2626', border: '#fca5a5' },
-    'Paid in Full': { bg: '#f0fdf4', text: '#15803d', border: '#86efac' },
-    'Written Off': { bg: '#f9fafb', text: '#6b7280', border: '#d1d5db' },
-  };
-
-  document.getElementById('commBody').innerHTML = display.map(deal => {
-    const sc = statusColor[deal.commStatus] || statusColor['Written Off'];
-    const net = deal.myNetComm || deal.estComm || 0;
-    const collected = deal.commCollected || 0;
-    const balance = net - collected;
-    const isOverdue = deal.commDueDate && new Date(deal.commDueDate) < new Date();
-    return `
-      <tr onclick="openDeal('${deal.id}')" style="cursor:pointer">
-        <td style="font-weight:500;color:var(--navy)">${deal.name}</td>
-        <td>${deal.market || '—'}</td>
-        <td><span style="display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:500;background:${sc.bg};color:${sc.text};border:1px solid ${sc.border}">${deal.commStatus || '—'}</span></td>
-        <td style="font-weight:500;color:var(--navy)">${formatCurrency(net)}</td>
-        <td style="color:var(--green)">${collected ? formatCurrency(collected) : '—'}</td>
-        <td style="color:${balance > 0 ? 'var(--red)' : 'var(--gray-500)'};font-weight:${balance > 0 ? '600' : '400'}">${balance > 0 ? formatCurrency(balance) : '—'}</td>
-        <td style="color:${isOverdue ? 'var(--red)' : 'var(--gray-700)'}">${formatDate(deal.commDueDate)}${isOverdue ? ' ⚠' : ''}</td>
-        <td>${formatDate(deal.rentStart)}</td>
-      </tr>`;
   }).join('') || '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--gray-500)">No commission records found</td></tr>';
 }
 
