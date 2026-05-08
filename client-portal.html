@@ -284,32 +284,34 @@ const AT = "https://api.airtable.com/v0";
 const TABLES = { properties:"tble75Hvhs5WVI26t", deals:"tblfqQb0kbBZm0w51", activities:"tblpRnPPxCVrSJsYs", marketing:"tblLYJ5x2NSTV90Ds", leads:"tblEJNkBNzW9YpPoH" };
 const MKT = { property:"fld1cJnwFki0t0zYT", month:"fldmUKhAMUstuZAB9", crexi:"fldNhlAKjP76MJhb8", tc:"fldrjxv8WqwPX6dWe", costar:"fldZFOi21rG1kPExq", clasif:"fld6BQzXkM8MWzU3b", other:"fldNPStXWP7WobKQP", totalViews:"fldWzSy3p2bicZdWO", dl:"fldEjXoXBjaclcYf4", leads:"fldpqwFmuHgVEOwMU", sign:"fldqHrbFre7NK2k4C", webCalls:"fldot4Ntk3tW1H97k", outreach:"fldehDyUOXHDLpenn", tours:"fldY6H2ShZbnJPDI3", lois:"fldGEdf4F1OfRjKD5", notes:"fld3hqPA3sfbkADiU" };
 
-// Portals are managed via portal-manager.html and stored in localStorage
-// Fallback built-in portals for backwards compatibility
-const BUILTIN_PORTALS = [
-  { id:"exit24-dorado-2024", name:"Exit 24 — Dorado", type:"Retail Development", propName:"Exit 24 Retail Development", keywords:["exit 24","dorado","exit24"], docs:[] },
-  { id:"ceiba-ferry-hms-2024", name:"Ceiba Ferry Terminal", type:"Retail & F&B Leasing", propName:"Ceiba Ferry Terminal", keywords:["ceiba","ferry","hornblower"], docs:[] },
-  { id:"union-plaza-ed-2024", name:"Union Plaza — Hato Rey", type:"Office Leasing · 157,315 RSF", propName:"Union Plaza", keywords:["union plaza","union"], docs:[] },
-  { id:"canton-mall-bayamon-2024", name:"Canton Mall — Bayamón", type:"Retail Leasing", propName:"Canton Mall", keywords:["canton","cantón"], docs:[] },
-];
-
-function getPortalConfig(id){
-  // First check portal manager storage
-  const stored = localStorage.getItem("sc_portals_v2");
-  if(stored){
-    const portals = JSON.parse(stored);
-    const found = portals.find(p=>p.id===id);
-    if(found) return found;
-  }
-  // Fall back to built-in
-  return BUILTIN_PORTALS.find(p=>p.id===id) || null;
-}
+// Portal config is loaded from Airtable Properties table using record ID
+const PRIVATE_FIELD = "fld1JZFgf4oCCKgwA";
+const PROP_FIELDS = {
+  name: "fldpn9sifUUTV8jmb",
+  address: "flddosmCbsmj7hYuM",
+  city: "fld3qzwSpJASfkZ3r",
+  state: "fldAx8FIxumN9CdXG",
+  market: "fldVjprlXVct0Gnz1",
+  type: "fld8ubzef720mR1qa",
+  subtype: "fldUjjdHiMdWEW5jp",
+  status: "fldSnPz8yyqnp8is7",
+  role: "fldd1sDfyFa4iNCqU",
+  sf: "fldxoT36S88BWYQu8",
+  price: "fldhQ06nbrn8PuoPA",
+  rate: "fldrYx5rxD16LD2qC",
+  private: "fld1JZFgf4oCCKgwA",
+  deals: "fld5teqWZfU2JptLT",
+  mktStats: "fldkGQLRS84s1BuI3",
+  leads: "fld3pRdswKPBhS9Jf",
+  activities: "fldEnAceR7ZCNX5ya",
+};
 
 const TYPE_COLORS = { "Tour / Site Visit":"#10b981","Call":"#3b82f6","Email":"#8b5cf6","LOI Received":"#ef4444","Lease Executed":"#16a34a","Meeting":"#f59e0b","General Update":"#6b7280","Marketing Update":"#265CFF" };
 const PROSPECT_STAGES = ["New Lead","Contacted","Interested","Underwriting","Site Visit","LOI","Closed"];
 const STAGE_COLORS = { "New Lead":["#EFF6FF","#1D4ED8"],"Contacted":["#F0FDF4","#15803D"],"Interested":["#FFFBEB","#B45309"],"Underwriting":["#F5F3FF","#6D28D9"],"Site Visit":["#FFF7ED","#C2410C"],"LOI":["#FEF2F2","#DC2626"],"Closed":["#F0FDF4","#15803D"] };
 
 let pat = localStorage.getItem("sc_pat") || "";
+let propId = "";
 let clientId = "", cfg = null;
 let allProps=[], allDeals=[], allActs=[], allMkt=[], allLeads=[];
 
@@ -345,8 +347,42 @@ function matchesCfg(text){
   return cfg.keywords.some(k=>t.includes(k));
 }
 
+function matchesPropId(linkedArr){
+  if(!linkedArr||!Array.isArray(linkedArr))return false;
+  return linkedArr.some(l=>(l.id||l)===propId);
+}
+
 async function loadPortal(){
   try{
+    // Fetch the specific property record first
+    const propRes=await fetch(AT+"/"+BASE_ID+"/"+TABLES.properties+"/"+propId+"?returnFieldsByFieldId=true",{headers:{"Authorization":"Bearer "+pat}});
+    if(!propRes.ok){
+      const e=await propRes.json();
+      throw new Error(e.error?.message||"Property not found");
+    }
+    const propRecord=await propRes.json();
+    const pf=propRecord.fields||{};
+    
+    // Check if private
+    if(pf[PRIVATE_FIELD]===true){
+      document.getElementById("loadingScreen").style.display="none";
+      document.getElementById("errorScreen").style.display="block";
+      return;
+    }
+    
+    // Build cfg from property record
+    cfg={
+      id: propRecord.id,
+      name: pf[PROP_FIELDS.name]||"Property Portal",
+      type: [pf[PROP_FIELDS.subtype]?.name||pf[PROP_FIELDS.type]?.name||"", pf[PROP_FIELDS.sf]?Number(pf[PROP_FIELDS.sf]).toLocaleString()+" SF":""].filter(Boolean).join(" · "),
+      propName: pf[PROP_FIELDS.name]||"",
+      address: pf[PROP_FIELDS.address]||"",
+      city: pf[PROP_FIELDS.city]||"",
+      market: pf[PROP_FIELDS.market]?.name||"",
+      keywords: [(pf[PROP_FIELDS.name]||"").toLowerCase()],
+      docs:[],
+    };
+
     [allProps,allDeals,allActs,allMkt,allLeads]=await Promise.all([
       fetchAll(TABLES.properties),fetchAll(TABLES.deals),
       fetchAll(TABLES.activities),fetchAll(TABLES.marketing),fetchAll(TABLES.leads)
@@ -531,16 +567,12 @@ function switchPage(id,btn){
 
 window.addEventListener("DOMContentLoaded",()=>{
   const params=new URLSearchParams(window.location.search);
-  clientId=params.get("client")||"";
-  cfg=getPortalConfig(clientId);
-  if(!cfg){
+  clientId=params.get("id")||params.get("client")||"";
+  propId=clientId;
+  if(!propId){
     document.getElementById("loadingScreen").style.display="none";
     document.getElementById("errorScreen").style.display="block";
     return;
-  }
-  // Set keywords based on client config
-  if(!cfg.keywords){
-    cfg.keywords=[cfg.propName.toLowerCase().split(" ")[0]];
   }
   if(!pat||!pat.startsWith("pat")){
     localStorage.removeItem("sc_pat"); pat="";
