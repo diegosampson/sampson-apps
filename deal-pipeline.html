@@ -668,19 +668,18 @@ function formatDate(dateStr) {
 async function syncData() {
   if (!pat) { showToast('Enter your Airtable token first', 'error'); return; }
   const btn = document.getElementById('syncBtn');
-  btn.classList.add('loading');
-  btn.innerHTML = '<span>↻</span> Loading...';
+  if (btn) { btn.classList.add('loading'); btn.innerHTML = '<span>↻</span> Loading...'; }
 
   try {
     let records = [];
     let offset = null;
     do {
-      let url = `${AT_API}/${BASE_ID}/${DEALS_TABLE}?pageSize=100&returnFieldsByFieldId=true&cellFormat=json`;
+      let url = `https://api.airtable.com/v0/${BASE_ID}/${DEALS_TABLE}?pageSize=100&returnFieldsByFieldId=true&cellFormat=json`;
       if (offset) url += `&offset=${offset}`;
-      const res = await fetch(url, { headers: getHeaders() });
+      const res = await fetch(url, { headers: { 'Authorization': `Bearer ${pat}` } });
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error?.message || 'API error');
+        throw new Error(err.error?.message || `HTTP ${res.status}`);
       }
       const data = await res.json();
       records = records.concat(data.records);
@@ -731,8 +730,7 @@ async function syncData() {
     showToast('Sync failed: ' + e.message, 'error');
     document.getElementById('loadingState').innerHTML = `<div style="color:#dc2626">Failed to load: ${e.message}</div><br><button class="btn-primary" onclick="syncData()">Retry</button>`;
   } finally {
-    btn.classList.remove('loading');
-    btn.innerHTML = '<span>↻</span> Refresh';
+    if (btn) { btn.classList.remove('loading'); btn.innerHTML = '<span>↻</span> Refresh'; }
   }
 }
 
@@ -1100,9 +1098,15 @@ function showNewDealModal() {
 
 // Init
 window.addEventListener('DOMContentLoaded', () => {
-  if (pat) {
-    document.getElementById('patInput').value = pat;
+  const stored = localStorage.getItem('sc_pat');
+  if (stored && stored.startsWith('pat')) {
+    pat = stored;
+    document.getElementById('patInput').value = stored;
     syncData();
+  } else {
+    // Clear any invalid cached token
+    localStorage.removeItem('sc_pat');
+    pat = '';
   }
 });
 </script>
