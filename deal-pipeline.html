@@ -674,8 +674,7 @@ async function syncData() {
     let records = [];
     let offset = null;
     do {
-      let url = `${AT_API}/${BASE_ID}/${DEALS_TABLE}?pageSize=100&returnFieldsByFieldId=true&cellFormat=json`;
-      if (offset) url += `&offset=${offset}`;
+      let url = `${AT_API}/${BASE_ID}/${DEALS_TABLE}?pageSize=100&returnFieldsByFieldId=true&cellFormat=json${showArchived ? '' : "&filterByFormula=AND(NOT({Archived}),{Stage}!='Closed',{Stage}!='Dead')"}`;      if (offset) url += `&offset=${offset}`;
       const res = await fetch(url, { headers: getHeaders() });
       if (!res.ok) {
         const err = await res.json();
@@ -849,7 +848,96 @@ function renderGrid() {
   }).join('');
 }
 
-function renderCommissions() {
+async function renderCommissions() {
+  const commView = document.getElementById('commissionsView');
+  commView.classList.add('active');
+  document.getElementById('commBody').innerHTML = '<tr><td colspan="8" style="text-align:center;padding:1.5rem;color:var(--gray-500)">Loading...</td></tr>';
+
+  // Fetch closed deals separately regardless of archive status
+  let closedDeals = [];
+  try {
+    let records = [], offset = null;
+    do {
+      let url = `${AT_API}/${BASE_ID}/${DEALS_TABLE}?pageSize=100&returnFieldsByFieldId=true&cellFormat=json&filterByFormula=OR({Stage}='Closed',{Stage}='Under Contract')`;
+      if (offset) url += `&offset=${offset}`;
+      const res = await fetch(url, { headers: getHeaders() });
+      const data = await res.json();
+      records = records.concat(data.records);
+      offset = data.offset;
+    } while (offset);
+
+    closedDeals = records.map(r => {
+      const f = r.fields || {};
+      return {
+        id: r.id,
+        name: f[FIELDS.name] || 'Untitled',
+        market: f[FIELDS.market]?.name || f[FIELDS.market] || '',
+        stage: f[FIELDS.stage]?.name || f[FIELDS.stage] || '',
+        myNetComm: f[FIELDS.myNetComm] || 0,
+        estComm: f[FIELDS.estComm] || 0,
+        commStatus: f[FIELDS.commStatus]?.name || f[FIELDS.commStatus] || '',
+        commCollected: f[FIELDS.commCollected] || 0,
+        commBalance: f[FIELDS.commBalance] || 0,
+        commDueDate: f[FIELDS.commDueDate] || '',
+        rentStart: f[FIELDS.rentStart] || '',
+      };
+    });
+  } catch(e) {
+    showToast('Failed to load commissions: ' + e.message, 'error');
+    return;
+  }
+
+  const partial = closedDeals.filter(d => d.commStatus === 'Partial');
+  const notCollected = closedDeals.filter(d => d.commStatus === 'Not Collected');
+  const paid = closedDeals.filter(d => d.commStatus === 'Paid in Full');
+
+  const totalBalance = partial.reduce((s,d) => s + ((d.myNetComm || d.estComm) - (d.commCollected||0)), 0);
+  const totalPending = notCollected.reduce((s,d) => s + (d.myNetComm||d.estComm||0), 0);
+  const totalPaid = paid.reduce((s,d) => s + (d.commCollected||d.myNetComm||0), 0);
+
+  document.getElementById('commSummaryCards').innerHTML = `
+    <div class="summary-card alert" style="flex:1">
+      <div class="summary-label">Partial — Balance Due</div>
+      <div class="summary-value">${formatCurrency(totalBalance)}</div>
+      <div class="summary-sub">${partial.length} deal${partial.length!==1?'s':''} with open balance</div>
+    </div>
+    <div class="summary-card today" style="flex:1">
+      <div class="summary-label">Not Collected</div>
+      <div class="summary-value">${formatCurrency(totalPending)}</div>
+      <div class="summary-sub">${notCollected.length} deal${notCollected.length!==1?'s':''} pending</div>
+    </div>
+    <div class="summary-card" style="flex:1">
+      <div class="summary-label">Paid in Full</div>
+      <div class="summary-value" style="color:var(--green)">${formatCurrency(totalPaid)}</div>
+      <div class="summary-sub">${paid.length} deal${paid.length!==1?'s':''} closed & paid</div>
+    </div>`;
+
+  const display = [...partial, ...notCollected, ...paid];
+  const statusColor = {
+    'Partial': { bg:'#fffbeb', text:'#b45309', border:'#fcd34d' },
+    'Not Collected': { bg:'#fef2f2', text:'#dc2626', border:'#fca5a5' },
+    'Paid in Full': { bg:'#f0fdf4', text:'#15803d', border:'#86efac' },
+    'Written Off': { bg:'#f9fafb', text:'#6b7280', border:'#d1d5db' },
+  };
+
+  document.getElementById('commBody').innerHTML = display.map(deal => {
+    const sc = statusColor[deal.commStatus] || statusColor['Written Off'];
+    const net = deal.myNetComm || deal.estComm || 0;
+    const collected = deal.commCollected || 0;
+    const balance = net - collected;
+    const isOverdue = deal.commDueDate && new Date(deal.commDueDate) < new Date();
+    return `<tr onclick="openDeal('${deal.id}')" style="cursor:pointer">
+      <td style="font-weight:500;color:var(--navy)">${deal.name}</td>
+      <td>${deal.market||'—'}</td>
+      <td><span style="display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:500;background:${sc.bg};color:${sc.text};border:1px solid ${sc.border}">${deal.commStatus||'—'}</span></td>
+      <td style="font-weight:500;color:var(--navy)">${formatCurrency(net)}</td>
+      <td style="color:var(--green)">${collected?formatCurrency(collected):'—'}</td>
+      <td style="color:${balance>0?'var(--red)':'var(--gray-500)'};font-weight:${balance>0?'600':'400'}">${balance>0?formatCurrency(balance):'—'}</td>
+      <td style="color:${isOverdue?'var(--red)':'var(--gray-700)'}">${formatDate(deal.commDueDate)}${isOverdue?' ⚠':''}</td>
+      <td>${formatDate(deal.rentStart)}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--gray-500)">No commission records found</td></tr>';
+}
   const commView = document.getElementById('commissionsView');
   commView.classList.add('active');
 
@@ -931,8 +1019,7 @@ function switchView(view, btn) {
   } else if (view === 'commissions') {
     commissions.classList.add('active');
     renderCommissions();
-  } else {
-    kanban.style.display = 'block';
+  } else {    kanban.style.display = 'block';
     applyFilters();
   }
 }
@@ -1032,8 +1119,8 @@ function toggleArchived() {
   const btn = document.getElementById('archiveBtn');
   btn.style.color = showArchived ? 'var(--orange)' : '';
   btn.style.borderColor = showArchived ? 'var(--orange)' : '';
-  applyFilters();
-  showToast(showArchived ? 'Showing archived deals' : 'Archived deals hidden');
+  syncData();
+  showToast(showArchived ? 'Showing all deals including archived' : 'Showing active deals only');
 }
 
 async function archiveDeal() {
