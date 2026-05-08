@@ -169,7 +169,16 @@ function render(){
 }
 
 function copyLink(url){
-  navigator.clipboard.writeText(url).then(()=>showToast("Link copied ✓"));
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(url).then(()=>showToast("Link copied ✓"));
+  } else {
+    const ta=document.createElement("textarea");
+    ta.value=url; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    showToast("Link copied ✓");
+  }
 }
 
 async function makePrivate(id,name){
