@@ -310,7 +310,8 @@ const TYPE_COLORS = { "Tour / Site Visit":"#10b981","Call":"#3b82f6","Email":"#8
 const PROSPECT_STAGES = ["New Lead","Contacted","Interested","Underwriting","Site Visit","LOI","Closed"];
 const STAGE_COLORS = { "New Lead":["#EFF6FF","#1D4ED8"],"Contacted":["#F0FDF4","#15803D"],"Interested":["#FFFBEB","#B45309"],"Underwriting":["#F5F3FF","#6D28D9"],"Site Visit":["#FFF7ED","#C2410C"],"LOI":["#FEF2F2","#DC2626"],"Closed":["#F0FDF4","#15803D"] };
 
-let pat = localStorage.getItem("sc_pat") || "";
+// Read-only PAT embedded — clients never need to enter credentials
+let pat = "PASTE_READONLY_PAT_HERE";
 let propId = "";
 let clientId = "", cfg = null;
 let allProps=[], allDeals=[], allActs=[], allMkt=[], allLeads=[];
@@ -575,9 +576,7 @@ window.addEventListener("DOMContentLoaded",()=>{
     return;
   }
   if(!pat||!pat.startsWith("pat")){
-    localStorage.removeItem("sc_pat"); pat="";
-    document.getElementById("loadingScreen").style.display="none";
-    document.getElementById("patSetup").style.display="block";
+    document.getElementById("loadingScreen").innerHTML='<div style="color:#dc2626;font-size:14px">Portal configuration error. Contact diego@sampsonre.com</div>';
     return;
   }
   loadPortal();
