@@ -183,7 +183,7 @@ body { font-family:var(--font-body); background:var(--gray-100); color:var(--gra
       <div class="nav-item active" onclick="showPage('dashboard',this)">📊 Dashboard</div>
       <div class="nav-item" onclick="showPage('marketing',this)">📊 Marketing Stats</div>
       <div class="nav-item" onclick="showPage('properties',this)">🏢 Properties</div>
-      <div class="nav-item" onclick="showPage('clients',this)">👥 Client Links</div>
+      <div class="nav-item" onclick="window.open('portal-manager.html','_blank')">🔗 Portal Manager ↗</div>
     </div>
     <div class="nav-sep"></div>
     <div class="sidebar-section">
@@ -523,6 +523,7 @@ function renderDashboard() {
 }
 
 function renderAllProperties() {
+  const PORTAL_URL = window.location.href.replace('admin-portal.html','client-portal.html');
   document.getElementById('allPropertiesList').innerHTML = allProperties.map(p => {
     const name = fv(p,'fldpn9sifUUTV8jmb') || 'Untitled';
     const city = fv(p,'fld3qzwSpJASfkZ3r') || '';
@@ -531,6 +532,8 @@ function renderAllProperties() {
     const price = fv(p,'fldhQ06nbrn8PuoPA');
     const sf = fv(p,'fldxoT36S88BWYQu8');
     const rate = fv(p,'fldrYx5rxD16LD2qC');
+    const isPrivate = fv(p,'fld1JZFgf4oCCKgwA');
+    const portalUrl = PORTAL_URL + '?id=' + p.id;
     return `<div class="property-card">
       <div>
         <div class="prop-name">${name}</div>
@@ -539,6 +542,12 @@ function renderAllProperties() {
           <span class="badge badge-pr">PR</span>
           <span class="badge badge-type">${type}</span>
           <span class="badge ${status==='Active'?'badge-status-active':'badge-status-listing'}">${status}</span>
+          ${isPrivate ? '<span class="badge" style="background:#fef2f2;color:#dc2626">🔒 Private</span>' : ''}
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+          <a href="${portalUrl}" target="_blank" style="font-size:11px;font-weight:500;color:var(--blue);text-decoration:none;padding:4px 10px;border:1px solid var(--blue);border-radius:5px;">👁 View Portal</a>
+          <button onclick="navigator.clipboard.writeText('${portalUrl}').then(()=>showToast('Link copied ✓'))" style="font-size:11px;font-weight:500;color:var(--gray-700);background:var(--gray-100);border:1px solid var(--gray-200);border-radius:5px;padding:4px 10px;cursor:pointer;font-family:var(--font-body);">📋 Copy Link</button>
+          <a href="https://airtable.com/${BASE_ID}/tble75Hvhs5WVI26t/${p.id}" target="_blank" style="font-size:11px;font-weight:500;color:var(--gray-500);text-decoration:none;padding:4px 10px;border:1px solid var(--gray-200);border-radius:5px;">↗ Airtable</a>
         </div>
       </div>
       <div class="prop-right">
