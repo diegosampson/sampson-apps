@@ -219,6 +219,7 @@ const EXIT24_PROP_ID = "recCr4qeZCpOPrzsx";
 
 // Read-only PAT embedded
 let pat = "patUxasd1DXiXN4KN.a42a5694b47764e2ef4628cbc74747815f895dd1330d8857e02d9f63c435777c";
+let pat_src = localStorage.getItem("sc_pat") || pat;
 
 const TENANTS_TABLE = "tblxQtRWCzmjcWeZO";
 const TENANT_FIELDS = {
@@ -254,7 +255,7 @@ function saveGantt(){ localStorage.setItem(GANTT_KEY, JSON.stringify(ganttRows))
 let tenants = { phase1: [], phase2: [] };
 
 async function syncData(){
-  if(!pat_src||!pat_src.startsWith("pat"))return;
+  const activePat = pat_src||pat; if(!activePat||!activePat.startsWith("pat"))return; pat_src=activePat;
   try{
     const [deals,acts,mkt,rawTenants]=await Promise.all([
       fetchAll("tblfqQb0kbBZm0w51"),
@@ -523,13 +524,13 @@ window.addEventListener("DOMContentLoaded",()=>{
   if(sessionStorage.getItem(SESSION_KEY)==="1"){
     document.getElementById("loginScreen").style.display="none";
     document.getElementById("appContent").style.display="block";
-    if(pat_src&&pat_src.startsWith("pat")){
-      document.getElementById("patInput").value=pat_src;
+    const storedPat = localStorage.getItem("sc_pat");
+    if(storedPat&&storedPat.startsWith("pat")){ pat=storedPat; pat_src=storedPat; }
+    if((pat_src||pat)&&(pat_src||pat).startsWith("pat")){
+      document.getElementById("patInput").value=pat_src||pat;
       document.getElementById("setupBar").classList.add("hidden");
-      syncData();
-    } else {
-      renderDashboard();
     }
+    syncData();
   }
   // else stay on login screen
 });
