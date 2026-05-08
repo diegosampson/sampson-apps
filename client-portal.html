@@ -273,7 +273,10 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--gray-70
         <div class="broker-name">Diego Sampson, CCIM</div>
         <div class="broker-title">Principal Broker &middot; Sampson Commercial Real Estate &middot; Florida & Puerto Rico</div>
       </div>
-      <div class="broker-contact">diego@sampsonre.com<br>407-724-1167<br>sampsonre.com</div>
+      <div class="broker-contact">
+        diego@sampsonre.com<br>407-724-1167<br>sampsonre.com<br>
+        <a id="contactBtn" href="#" style="display:inline-block;margin-top:8px;background:var(--orange);color:var(--navy);padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;">✉ Send Message</a>
+      </div>
     </div>
   </div>
 </div>
@@ -392,6 +395,10 @@ async function loadPortal(){
     document.getElementById("portalContent").style.display="block";
     document.getElementById("clientName").textContent=cfg.name;
     document.title=cfg.name+" — Sampson Commercial";
+    const subject=encodeURIComponent(cfg.name+" — Portal Inquiry");
+    const body=encodeURIComponent("Hi Diego,\n\nI have a question regarding "+cfg.name+".\n\n");
+    const contactBtn=document.getElementById("contactBtn");
+    if(contactBtn) contactBtn.href="mailto:diego@sampsonre.com?subject="+subject+"&body="+body;
     renderAll();
   }catch(e){
     document.getElementById("loadingScreen").innerHTML=`<div style="color:#dc2626;font-size:14px">Error: ${e.message}<br><br><button onclick="location.reload()" style="margin-top:10px;padding:8px 16px;background:#001A4C;color:white;border:none;border-radius:6px;cursor:pointer">Retry</button></div>`;
@@ -404,7 +411,12 @@ function renderDashboard(){
   const myMkt=allMkt.filter(m=>{const l=fv(m,MKT.property);return Array.isArray(l)&&l.some(x=>(x.name||x).toLowerCase().includes(cfg.keywords[0]));});
   const myLeads=allLeads.filter(l=>matchesCfg(fv(l,"fldsf8sOdxxcVkF3A")||fv(l,"fldoSNNBoDrMiwh3Y")));
   const myDeals=allDeals.filter(d=>matchesCfg(fv(d,"fldwx2kEFyoudmE4m")));
-  const myVisits=allActs.filter(a=>fv(a,"fld3bRwf1ooXKs2Uq")==="Tour / Site Visit");
+  const myActs=allActs.filter(a=>{
+    const linked=fv(a,"fldlGyCmsLGiYxU7i");
+    if(!linked||!Array.isArray(linked))return false;
+    return linked.some(l=>(l.id||l)===propId);
+  });
+  const myVisits=myActs.filter(a=>fv(a,"fld3bRwf1ooXKs2Uq")==="Tour / Site Visit");
   const totalViews=myMkt.reduce((s,m)=>s+(fv(m,MKT.totalViews)||0),0);
   const totalDL=myMkt.reduce((s,m)=>s+(fv(m,MKT.dl)||0),0);
   const totalLOIs=myMkt.reduce((s,m)=>s+(fv(m,MKT.lois)||0),0);
@@ -412,7 +424,7 @@ function renderDashboard(){
 
   document.getElementById("dashMetrics").innerHTML=[
     {icon:"🏢",v:1,l:"Properties"},
-    {icon:"📈",v:allActs.length,l:"Total Activity"},
+    {icon:"📈",v:myActs.length,l:"Total Activity"},
     {icon:"👁",v:totalViews,l:"Listing Views"},
     {icon:"📥",v:totalDL,l:"OM Downloads"},
     {icon:"📞",v:totalOutreach,l:"Broker Outreach",sub:"calls, emails & follow-ups"},
@@ -433,7 +445,11 @@ function renderDashboard(){
 }
 
 function renderActivity(){
-  const acts=[...allActs].sort((a,b)=>(fv(b,"fldOCdpm5wYututlT")||"").localeCompare(fv(a,"fldOCdpm5wYututlT")||""));
+  const acts=[...allActs].filter(a=>{
+    const linked=fv(a,"fldlGyCmsLGiYxU7i");
+    if(!linked||!Array.isArray(linked))return false;
+    return linked.some(l=>(l.id||l)===propId);
+  }).sort((a,b)=>(fv(b,"fldOCdpm5wYututlT")||"").localeCompare(fv(a,"fldOCdpm5wYututlT")||""));
   document.getElementById("activityList").innerHTML=acts.length?acts.map((a,i)=>{
     const type=fv(a,"fld3bRwf1ooXKs2Uq")||"Update";
     const color=TYPE_COLORS[type]||"#6b7280";
@@ -479,7 +495,11 @@ function renderMarketing(){
 }
 
 function renderSiteVisits(){
-  const visits=allActs.filter(a=>fv(a,"fld3bRwf1ooXKs2Uq")==="Tour / Site Visit").sort((a,b)=>(fv(b,"fldOCdpm5wYututlT")||"").localeCompare(fv(a,"fldOCdpm5wYututlT")||""));
+  const visits=allActs.filter(a=>{
+    const linked=fv(a,"fldlGyCmsLGiYxU7i");
+    if(!linked||!Array.isArray(linked))return false;
+    return linked.some(l=>(l.id||l)===propId) && fv(a,"fld3bRwf1ooXKs2Uq")==="Tour / Site Visit";
+  }).sort((a,b)=>(fv(b,"fldOCdpm5wYututlT")||"").localeCompare(fv(a,"fldOCdpm5wYututlT")||""));
   const completed=visits.filter(v=>fv(v,"fldy6vA3G18CQYCjB")==="Completed"||fv(v,"fldy6vA3G18CQYCjB")==="Done").length;
 
   document.getElementById("visitStats").innerHTML=[
@@ -546,7 +566,13 @@ function renderDocuments(){
 }
 
 function renderUpdates(){
-  const updates=allActs.filter(a=>fv(a,"fld3bRwf1ooXKs2Uq")==="General Update"||fv(a,"fld3bRwf1ooXKs2Uq")==="Marketing Update").sort((a,b)=>(fv(b,"fldOCdpm5wYututlT")||"").localeCompare(fv(a,"fldOCdpm5wYututlT")||""));
+  const updates=allActs.filter(a=>{
+    const linked=fv(a,"fldlGyCmsLGiYxU7i");
+    if(!linked||!Array.isArray(linked))return false;
+    const isLinked=linked.some(l=>(l.id||l)===propId);
+    const type=fv(a,"fld3bRwf1ooXKs2Uq")||"";
+    return isLinked && (type==="General Update"||type==="Marketing Update");
+  }).sort((a,b)=>(fv(b,"fldOCdpm5wYututlT")||"").localeCompare(fv(a,"fldOCdpm5wYututlT")||""));
   document.getElementById("updatesList").innerHTML=updates.length?updates.map(u=>{
     const dt=fv(u,"fldOCdpm5wYututlT");
     return `<div class="update-item">
