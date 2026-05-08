@@ -218,14 +218,17 @@ const AT = "https://api.airtable.com/v0";
 const EXIT24_PROP_ID = "recCr4qeZCpOPrzsx";
 
 // Read-only PAT embedded
-let pat = "patwr5ewYdJi99qNJ.04afc528752db6f0e001c53611b8ff84c2cb0c31f4c75a2f117c30473f063079";
+let pat = "REPLACE_WITH_READONLY_PAT";
 
 const TENANTS_TABLE = "tblxQtRWCzmjcWeZO";
 const TENANT_FIELDS = {
   name: "fldqCiLFLmeQdRAMl",
   space: "fldxCu7uqyOYdnZPT",
   sf: "fldtOekmvTaeKJYOU",
+  sm: "fldqHe2Sgoo7SWXnU",
   rate: "fldZyV91dsWCz7CKf",
+  glPrice: "fldFw2d4U2sk0WPIw",
+  type: "fld5U0qYPTaLQRx2m",
   phase: "fldHTUMcbwXMi8hcO",
   status: "fldT1GpBmpKzgy0l4",
   notes: "fld3UXFI4NZITfQuG",
@@ -267,7 +270,10 @@ async function syncData(){
       name: fv(r, TENANT_FIELDS.name)||"",
       space: fv(r, TENANT_FIELDS.space)||"",
       sf: fv(r, TENANT_FIELDS.sf)||0,
+      sm: fv(r, TENANT_FIELDS.sm)||0,
       rate: fv(r, TENANT_FIELDS.rate)||0,
+      glPrice: fv(r, TENANT_FIELDS.glPrice)||0,
+      type: fv(r, TENANT_FIELDS.type)||"",
       phase: fv(r, TENANT_FIELDS.phase)||"Phase I",
       status: fv(r, TENANT_FIELDS.status)||"Target",
       notes: fv(r, TENANT_FIELDS.notes)||"",
@@ -468,11 +474,15 @@ function renderPhaseProgress(tenants){
 
 function renderTenantCard(t){
   const cls = STATUS_COLORS[t.status]||"status-target";
+  const sfStr = t.sf ? Number(t.sf).toLocaleString()+" SF" : "";
+  const smStr = t.sm ? " / "+Number(t.sm).toLocaleString()+" SM" : "";
+  const isGL = t.type==="Ground Lease" || t.type==="Outparcel";
+  const priceStr = isGL && t.glPrice ? fmt$(t.glPrice)+"/yr GL" : (t.rate ? "$"+t.rate+"/SF/yr" : "");
   return `<div class="tenant-card ${cls}">
     <div class="tenant-name">${t.name}</div>
-    <div class="tenant-space">${t.space} · ${Number(t.sf).toLocaleString()} SF</div>
+    <div class="tenant-space">${t.space}${sfStr?` · ${sfStr}`:""}${smStr}</div>
     <div class="tenant-footer">
-      <div class="tenant-rate">$${t.rate}/SF/yr</div>
+      <div class="tenant-rate" style="font-size:10px">${priceStr}</div>
       <select onchange="updateTenantStatus('${t.id}',this.value)" style="font-size:10px;border:1px solid var(--gray-200);border-radius:5px;padding:2px 4px;background:white;cursor:pointer;font-family:var(--font-body)">
         ${["Target","LOI","Lease Out","Executed"].map(s=>`<option value="${s}"${s===t.status?" selected":""}>${s}</option>`).join("")}
       </select>
