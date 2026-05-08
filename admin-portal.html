@@ -181,6 +181,7 @@ body { font-family:var(--font-body); background:var(--gray-100); color:var(--gra
     <div class="sidebar-section">
       <div class="sidebar-label">Overview</div>
       <div class="nav-item active" onclick="showPage('dashboard',this)">📊 Dashboard</div>
+      <div class="nav-item" onclick="showPage('marketing',this)">📊 Marketing Stats</div>
       <div class="nav-item" onclick="showPage('properties',this)">🏢 Properties</div>
       <div class="nav-item" onclick="showPage('clients',this)">👥 Client Links</div>
     </div>
@@ -209,7 +210,102 @@ body { font-family:var(--font-body); background:var(--gray-100); color:var(--gra
       <div id="dashProperties"><div class="loading"><div class="spinner"></div></div></div>
     </div>
 
-    <!-- PROPERTIES -->
+    <!-- MARKETING STATS -->
+    <div class="page" id="page-marketing">
+      <div class="page-header">
+        <div class="page-title">Marketing Stats</div>
+        <div class="page-sub">Monthly performance per listing — reads from and writes to Airtable</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <label style="font-size:13px;font-weight:500;color:var(--gray-700)">Select Property:</label>
+          <select id="mktPropSelect" onchange="loadMarketingStats()" style="border:1px solid var(--gray-200);border-radius:8px;padding:8px 12px;font-size:13px;font-family:var(--font-body);color:var(--gray-700);min-width:280px;">
+            <option value="">— Select a property —</option>
+          </select>
+        </div>
+        <button onclick="loadMarketingStats()" style="background:white;border:1px solid var(--gray-200);border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer;font-family:var(--font-body)">↻ Refresh</button>
+        <button onclick="showAddMonthModal()" id="btnAddWeek" style="background:var(--navy);color:white;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font-body);display:none;">+ Log Month</button>
+      </div>
+      <div id="mktSummaryCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:1.5rem;"></div>
+      <div id="mktWeeklyData"></div>
+    </div>
+
+    <!-- ADD MONTH MODAL -->
+    <div class="modal-overlay" id="mktModal" onclick="closeMktModal(event)" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;">
+      <div style="background:white;border-radius:14px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+        <div style="padding:20px 24px 16px;border-bottom:1px solid var(--gray-200);display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-family:var(--font-head);font-size:16px;font-weight:600;color:var(--navy)" id="mktModalTitle">Log Monthly Stats</div>
+          <button onclick="closeMktModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--gray-500)">×</button>
+        </div>
+        <div style="padding:20px 24px;">
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Month</label>
+              <input type="month" id="mktMonth" />
+            </div>
+            <div class="form-field">
+              <label>Notes</label>
+              <input type="text" id="mktNotes" placeholder="e.g. ICSC event, price reduction..." />
+            </div>
+            <div class="form-field">
+              <label>Crexi Views</label>
+              <input type="number" id="mktCrexi" value="0" min="0" />
+            </div>
+            <div class="form-field">
+              <label>TotalCommercial Views</label>
+              <input type="number" id="mktTC" value="0" min="0" />
+            </div>
+            <div class="form-field">
+              <label>CoStar Views</label>
+              <input type="number" id="mktCoStar" value="0" min="0" />
+            </div>
+            <div class="form-field">
+              <label>Clasificados Views</label>
+              <input type="number" id="mktClasif" value="0" min="0" />
+            </div>
+            <div class="form-field">
+              <label>Other Views</label>
+              <input type="number" id="mktOther" value="0" min="0" />
+            </div>
+            <div class="form-field">
+              <label>OM / Brochure Downloads</label>
+              <input type="number" id="mktDL" value="0" min="0" />
+            </div>
+            <div class="form-field">
+              <label>Leads / Inquiries</label>
+              <input type="number" id="mktLeads" value="0" min="0" />
+            </div>
+            <div class="form-field">
+              <label>Sign Calls</label>
+              <input type="number" id="mktSign" value="0" min="0" />
+            </div>
+            <div class="form-field">
+              <label>Website / Direct Calls</label>
+              <input type="number" id="mktWebCalls" value="0" min="0" />
+            </div>
+            <div class="form-field">
+              <label>Direct Reach Outs</label>
+              <input type="number" id="mktOutreach" value="0" min="0" />
+            </div>
+            <div class="form-field">
+              <label>Site Visits / Tours</label>
+              <input type="number" id="mktTours" value="0" min="0" />
+            </div>
+            <div class="form-field">
+              <label>LOIs Received</label>
+              <input type="number" id="mktLOIs" value="0" min="0" />
+            </div>
+          </div>
+          <div style="margin-top:6px;padding:10px 12px;background:var(--gray-100);border-radius:8px;font-size:12px;color:var(--gray-500)">
+            Total Views is calculated automatically by Airtable (Crexi + TotalCommercial + CoStar + Clasificados + Other)
+          </div>
+        </div>
+        <div style="padding:16px 24px;border-top:1px solid var(--gray-200);display:flex;gap:10px;justify-content:flex-end;">
+          <button onclick="closeMktModal()" style="background:none;border:1px solid var(--gray-200);color:var(--gray-700);padding:9px 16px;border-radius:6px;font-size:13px;cursor:pointer;font-family:var(--font-body)">Cancel</button>
+          <button onclick="saveMarketingMonth()" style="background:var(--navy);color:white;border:none;padding:9px 20px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font-body)" id="mktSaveBtn">Save to Airtable</button>
+        </div>
+      </div>
+    </div>
     <div class="page" id="page-properties">
       <div class="page-header">
         <div class="page-title">All Properties</div>
@@ -371,6 +467,7 @@ async function syncAll() {
     renderDashboard();
     renderAllProperties();
     renderClientLinks();
+    populatePropSelect();
     showToast(`Synced — ${props.length} properties, ${deals.length} deals`);
   } catch(e) {
     document.getElementById('setupStatus').className = 'setup-status err';
@@ -475,6 +572,193 @@ function renderClientLinks() {
 
 function copyLink(id, url) {
   navigator.clipboard.writeText(url).then(() => showToast('Link copied to clipboard ✓'));
+}
+
+const MKT_FIELDS = {
+  entryName:  'fldhJeEgZ26O5oJjA',
+  property:   'fld1cJnwFki0t0zYT',
+  month:      'fldmUKhAMUstuZAB9',
+  crexi:      'fldNhlAKjP76MJhb8',
+  clasificados:'fld6BQzXkM8MWzU3b',
+  tc:         'fldrjxv8WqwPX6dWe',
+  other:      'fldNPStXWP7WobKQP',
+  costar:     'fldZFOi21rG1kPExq',
+  totalViews: 'fldWzSy3p2bicZdWO',
+  dl:         'fldEjXoXBjaclcYf4',
+  leads:      'fldpqwFmuHgVEOwMU',
+  sign:       'fldqHrbFre7NK2k4C',
+  webCalls:   'fldot4Ntk3tW1H97k',
+  outreach:   'fldehDyUOXHDLpenn',
+  tours:      'fldY6H2ShZbnJPDI3',
+  lois:       'fldGEdf4F1OfRjKD5',
+  notes:      'fld3hqPA3sfbkADiU',
+};
+
+function populatePropSelect() {
+  const sel = document.getElementById('mktPropSelect');
+  if (!sel) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— Select a property —</option>' +
+    allProperties.map(p => {
+      const name = fv(p,'fldpn9sifUUTV8jmb') || 'Untitled';
+      return `<option value="${p.id}">${name}</option>`;
+    }).join('');
+  if (current) sel.value = current;
+}
+
+function loadMarketingStats() {
+  const propId = document.getElementById('mktPropSelect').value;
+  const btnAdd = document.getElementById('btnAddWeek');
+  if (!propId) {
+    document.getElementById('mktSummaryCards').innerHTML = '';
+    document.getElementById('mktWeeklyData').innerHTML = '<div class="empty-state" style="padding:2rem">Select a property to view marketing stats</div>';
+    if (btnAdd) btnAdd.style.display = 'none';
+    return;
+  }
+  if (btnAdd) btnAdd.style.display = 'block';
+
+  const mkt = allMarketing.filter(m => {
+    const linked = fv(m, MKT_FIELDS.property);
+    if (Array.isArray(linked)) return linked.some(l => (l.id || l) === propId);
+    return false;
+  });
+
+  mkt.sort((a,b) => (fv(b,MKT_FIELDS.month)||'').localeCompare(fv(a,MKT_FIELDS.month)||''));
+
+  const totalViews    = mkt.reduce((s,m)=>s+(fv(m,MKT_FIELDS.totalViews)||0),0);
+  const totalDL       = mkt.reduce((s,m)=>s+(fv(m,MKT_FIELDS.dl)||0),0);
+  const totalLeads    = mkt.reduce((s,m)=>s+(fv(m,MKT_FIELDS.leads)||0),0);
+  const totalTours    = mkt.reduce((s,m)=>s+(fv(m,MKT_FIELDS.tours)||0),0);
+  const totalLOIs     = mkt.reduce((s,m)=>s+(fv(m,MKT_FIELDS.lois)||0),0);
+  const totalOutreach = mkt.reduce((s,m)=>s+(fv(m,MKT_FIELDS.outreach)||0),0);
+  const totalSign     = mkt.reduce((s,m)=>s+(fv(m,MKT_FIELDS.sign)||0),0);
+
+  document.getElementById('mktSummaryCards').innerHTML = [
+    { label:'Total Views', value:totalViews, icon:'👁', sub:'All platforms combined' },
+    { label:'OM Downloads', value:totalDL, icon:'📥' },
+    { label:'Inquiries', value:totalLeads, icon:'💬' },
+    { label:'Outreach', value:totalOutreach, icon:'📞' },
+    { label:'Site Visits', value:totalTours, icon:'🚶' },
+    { label:'LOIs', value:totalLOIs, icon:'📄' },
+    { label:'Sign Calls', value:totalSign, icon:'☎' },
+  ].map(m=>`<div class="metric-card"><div style="font-size:18px;margin-bottom:6px">${m.icon}</div><div class="metric-value" style="font-size:20px">${m.value}</div><div class="metric-label">${m.label}</div>${m.sub?`<div class="metric-sub">${m.sub}</div>`:""}</div>`).join("");
+
+  if (mkt.length === 0) {
+    document.getElementById('mktWeeklyData').innerHTML = `<div class="card"><div class="card-body" style="text-align:center;padding:2rem;color:var(--gray-500)">No stats logged yet.<br>Click <strong>+ Log Month</strong> to add your first entry.</div></div>`;
+    return;
+  }
+
+  document.getElementById('mktWeeklyData').innerHTML = `
+    <div class="card">
+      <div class="card-header" style="background:var(--navy)"><div class="card-title">Monthly Log</div></div>
+      <div class="card-body" style="padding:0">
+        <table class="table">
+          <thead><tr><th>Month</th><th>Total Views</th><th>OM Downloads</th><th>Inquiries</th><th>Outreach</th><th>Tours</th><th>LOIs</th><th>Sign Calls</th><th>Notes</th></tr></thead>
+          <tbody>${mkt.map(m => {
+            const month = fv(m,MKT_FIELDS.month);
+            const label = month ? new Date(month+"T00:00:00").toLocaleDateString("en-US",{month:"long",year:"numeric"}) : "—";
+            return `<tr onclick="editMarketingEntry("${m.id}")" style="cursor:pointer">
+              <td style="font-weight:500;color:var(--navy)">${label}</td>
+              <td style="font-weight:600">${fv(m,MKT_FIELDS.totalViews)||0}</td>
+              <td>${fv(m,MKT_FIELDS.dl)||0}</td><td>${fv(m,MKT_FIELDS.leads)||0}</td>
+              <td>${fv(m,MKT_FIELDS.outreach)||0}</td><td>${fv(m,MKT_FIELDS.tours)||0}</td>
+              <td>${fv(m,MKT_FIELDS.lois)||0}</td><td>${fv(m,MKT_FIELDS.sign)||0}</td>
+              <td style="font-size:12px;color:var(--gray-500)">${fv(m,MKT_FIELDS.notes)||""}</td>
+            </tr>`;
+          }).join("")}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+let mktEditingId = null;
+
+function showAddMonthModal() {
+  mktEditingId = null;
+  document.getElementById('mktModalTitle').textContent = 'Log Monthly Stats';
+  document.getElementById('mktSaveBtn').textContent = 'Save to Airtable';
+  const now = new Date();
+  document.getElementById('mktMonth').value = now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0");
+  ["mktCrexi","mktTC","mktCoStar","mktClasif","mktOther","mktDL","mktLeads","mktSign","mktWebCalls","mktOutreach","mktTours","mktLOIs"].forEach(id => document.getElementById(id).value = "0");
+  document.getElementById('mktNotes').value = "";
+  document.getElementById('mktModal').style.opacity = "1";
+  document.getElementById('mktModal').style.pointerEvents = "all";
+}
+
+function editMarketingEntry(recordId) {
+  const m = allMarketing.find(x => x.id === recordId);
+  if (!m) return;
+  mktEditingId = recordId;
+  document.getElementById('mktModalTitle').textContent = "Edit Monthly Stats";
+  document.getElementById('mktSaveBtn').textContent = "Update Airtable";
+  const month = fv(m,MKT_FIELDS.month);
+  if (month) document.getElementById('mktMonth').value = month.substring(0,7);
+  document.getElementById('mktCrexi').value = fv(m,MKT_FIELDS.crexi)||0;
+  document.getElementById('mktTC').value = fv(m,MKT_FIELDS.tc)||0;
+  document.getElementById('mktCoStar').value = fv(m,MKT_FIELDS.costar)||0;
+  document.getElementById('mktClasif').value = fv(m,MKT_FIELDS.clasificados)||0;
+  document.getElementById('mktOther').value = fv(m,MKT_FIELDS.other)||0;
+  document.getElementById('mktDL').value = fv(m,MKT_FIELDS.dl)||0;
+  document.getElementById('mktLeads').value = fv(m,MKT_FIELDS.leads)||0;
+  document.getElementById('mktSign').value = fv(m,MKT_FIELDS.sign)||0;
+  document.getElementById('mktWebCalls').value = fv(m,MKT_FIELDS.webCalls)||0;
+  document.getElementById('mktOutreach').value = fv(m,MKT_FIELDS.outreach)||0;
+  document.getElementById('mktTours').value = fv(m,MKT_FIELDS.tours)||0;
+  document.getElementById('mktLOIs').value = fv(m,MKT_FIELDS.lois)||0;
+  document.getElementById('mktNotes').value = fv(m,MKT_FIELDS.notes)||"";
+  document.getElementById('mktModal').style.opacity = "1";
+  document.getElementById('mktModal').style.pointerEvents = "all";
+}
+
+function closeMktModal(e) {
+  if (e && e.target !== document.getElementById("mktModal")) return;
+  document.getElementById("mktModal").style.opacity = "0";
+  document.getElementById("mktModal").style.pointerEvents = "none";
+}
+
+async function saveMarketingMonth() {
+  const propId = document.getElementById("mktPropSelect").value;
+  const propName = document.getElementById("mktPropSelect").options[document.getElementById("mktPropSelect").selectedIndex].text;
+  if (!propId) { showToast("Select a property first","error"); return; }
+  const monthVal = document.getElementById("mktMonth").value;
+  if (!monthVal) { showToast("Select a month","error"); return; }
+
+  const fields = {
+    [MKT_FIELDS.entryName]: propName+" — "+monthVal,
+    [MKT_FIELDS.property]: [propId],
+    [MKT_FIELDS.month]: monthVal+"-01",
+    [MKT_FIELDS.crexi]: parseInt(document.getElementById("mktCrexi").value)||0,
+    [MKT_FIELDS.tc]: parseInt(document.getElementById("mktTC").value)||0,
+    [MKT_FIELDS.costar]: parseInt(document.getElementById("mktCoStar").value)||0,
+    [MKT_FIELDS.clasificados]: parseInt(document.getElementById("mktClasif").value)||0,
+    [MKT_FIELDS.other]: parseInt(document.getElementById("mktOther").value)||0,
+    [MKT_FIELDS.dl]: parseInt(document.getElementById("mktDL").value)||0,
+    [MKT_FIELDS.leads]: parseInt(document.getElementById("mktLeads").value)||0,
+    [MKT_FIELDS.sign]: parseInt(document.getElementById("mktSign").value)||0,
+    [MKT_FIELDS.webCalls]: parseInt(document.getElementById("mktWebCalls").value)||0,
+    [MKT_FIELDS.outreach]: parseInt(document.getElementById("mktOutreach").value)||0,
+    [MKT_FIELDS.tours]: parseInt(document.getElementById("mktTours").value)||0,
+    [MKT_FIELDS.lois]: parseInt(document.getElementById("mktLOIs").value)||0,
+    [MKT_FIELDS.notes]: document.getElementById("mktNotes").value,
+  };
+
+  try {
+    let res;
+    if (mktEditingId) {
+      res = await fetch(AT_API+"/"+BASE_ID+"/"+TABLES.marketingStats+"/"+mktEditingId, {
+        method:"PATCH", headers:getHeaders(), body:JSON.stringify({fields,typecast:true})
+      });
+    } else {
+      res = await fetch(AT_API+"/"+BASE_ID+"/"+TABLES.marketingStats, {
+        method:"POST", headers:getHeaders(), body:JSON.stringify({records:[{fields}],typecast:true})
+      });
+    }
+    if (!res.ok) throw new Error((await res.json()).error?.message||"Failed");
+    showToast(mktEditingId ? "Stats updated ✓" : "Month logged ✓");
+    closeMktModal({target:document.getElementById("mktModal")});
+    await syncAll();
+    loadMarketingStats();
+  } catch(e) { showToast("Failed: "+e.message,"error"); }
 }
 
 function showPage(pageId, navEl) {
