@@ -675,7 +675,8 @@ async function syncData() {
     let records = [];
     let offset = null;
     do {
-      let url = `${AT_API}/${BASE_ID}/${DEALS_TABLE}?pageSize=100&returnFieldsByFieldId=true&cellFormat=json`;      if (offset) url += `&offset=${offset}`;
+      let url = `${AT_API}/${BASE_ID}/${DEALS_TABLE}?pageSize=100&returnFieldsByFieldId=true&cellFormat=json`;
+      if (offset) url += `&offset=${offset}`;
       const res = await fetch(url, { headers: getHeaders() });
       if (!res.ok) {
         const err = await res.json();
@@ -708,12 +709,11 @@ async function syncData() {
         seller: f[FIELDS.seller] || '',
         role: f[FIELDS.role]?.name || f[FIELDS.role] || '',
         commStatus: f[FIELDS.commStatus]?.name || f[FIELDS.commStatus] || '',
-        archived: f['Archived'] || f[FIELDS.archived] || false,
+        archived: f['Archived'] || false,
         commCollected: f[FIELDS.commCollected] || 0,
         commBalance: f[FIELDS.commBalance] || 0,
         commDueDate: f[FIELDS.commDueDate] || '',
         rentStart: f[FIELDS.rentStart] || '',
-        archived: f[FIELDS.archived] || false,
       };
     });
 
