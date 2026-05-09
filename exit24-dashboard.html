@@ -198,6 +198,16 @@ async function hashPwd(pwd){
   return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
 }
 
+function saveToken(){
+  const v=document.getElementById("patInput").value.trim();
+  if(!v||!v.startsWith("pat")){document.getElementById("setupStatus").textContent="Invalid token";return;}
+  pat=v; pat_src=v; localStorage.setItem("sc_pat",v);
+  document.getElementById("setupStatus").className="status ok";
+  document.getElementById("setupStatus").textContent="Connecting...";
+  document.getElementById("setupBar").classList.add("hidden");
+  syncData();
+}
+
 async function checkPwd(){
   const pwd = document.getElementById("pwdInput").value;
   const hash = await hashPwd(pwd);
@@ -205,7 +215,18 @@ async function checkPwd(){
     sessionStorage.setItem(SESSION_KEY, "1");
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("appContent").style.display = "block";
-    syncData();
+    // Check if we have a valid PAT
+    const storedPat = localStorage.getItem("sc_pat");
+    if(storedPat && storedPat.startsWith("pat")){ 
+      pat = storedPat; pat_src = storedPat;
+      document.getElementById("setupBar").classList.add("hidden");
+      syncData();
+    } else if(pat && pat.startsWith("pat") && pat !== "REPLACE_WITH_READONLY_PAT"){
+      pat_src = pat;
+      document.getElementById("setupBar").classList.add("hidden");
+      syncData();
+    }
+    // else show the setup bar so user can enter PAT
   } else {
     document.getElementById("loginError").style.display = "block";
     document.getElementById("pwdInput").value = "";
@@ -218,7 +239,7 @@ const AT = "https://api.airtable.com/v0";
 const EXIT24_PROP_ID = "recCr4qeZCpOPrzsx";
 
 // Read-only PAT embedded
-let pat = "patUxasd1DXiXN4KN.a42a5694b47764e2ef4628cbc74747815f895dd1330d8857e02d9f63c435777c";
+let pat = "REPLACE_WITH_READONLY_PAT";
 let pat_src = localStorage.getItem("sc_pat") || pat;
 
 const TENANTS_TABLE = "tblxQtRWCzmjcWeZO";
