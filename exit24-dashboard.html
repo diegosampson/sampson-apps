@@ -204,6 +204,18 @@ function showToast(msg,type="success"){
   setTimeout(()=>t.className="toast",3000);
 }
 
+async function fetchAll(tid){
+  let recs=[],offset=null;
+  do{
+    let url=AT+"/"+BASE_ID+"/"+tid+"?pageSize=100&returnFieldsByFieldId=true";
+    if(offset)url+="&offset="+offset;
+    const res=await fetch(url,{headers:getH()});
+    if(!res.ok)throw new Error((await res.json()).error?.message||"API error");
+    const d=await res.json(); recs=recs.concat(d.records); offset=d.offset;
+  }while(offset);
+  return recs;
+}
+
 function saveToken(){
   const v=document.getElementById("patInput").value.trim();
   if(!v||!v.startsWith("pat")){document.getElementById("setupStatus").textContent="Invalid token";return;}
@@ -227,7 +239,7 @@ async function checkPwd(){
       pat = storedPat; pat_src = storedPat;
       document.getElementById("setupBar").classList.add("hidden");
       syncData();
-    } else if(pat && pat.startsWith("pat") && pat !== "pat34wZxlJo8scpaT.622b8ee410f70273e7c3afb4084cbe769785539bf32baf78edd95e2999fd4751"){
+    } else if(pat && pat.startsWith("pat") && pat !== "REPLACE_WITH_READONLY_PAT"){
       pat_src = pat;
       document.getElementById("setupBar").classList.add("hidden");
       syncData();
@@ -330,6 +342,8 @@ async function updateTenantStatus(id, newStatus){
   }catch(e){ showToast("Update failed: "+e.message,"error"); }
 }
 
+function getH(){ return {"Authorization":"Bearer "+(pat_src||pat)}; }
+function fv(r,f){const v=(r.fields||r.cellValuesByFieldId||{})[f];if(v&&typeof v==="object"&&v.name)return v.name;if(Array.isArray(v))return v;return v;}
 function fmt$(v){ return "$"+Number(v).toLocaleString("en-US",{maximumFractionDigits:0}); }
 function fmtK$(v){ if(v>=1000000) return "$"+Number(v/1000000).toFixed(2)+"M"; return "$"+Number(v/1000).toFixed(0)+"K"; }
 
