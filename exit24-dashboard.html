@@ -219,7 +219,7 @@ async function fetchAll(tid){
 function saveToken(){
   const v=document.getElementById("patInput").value.trim();
   if(!v||!v.startsWith("pat")){document.getElementById("setupStatus").textContent="Invalid token";return;}
-  pat=v; pat_src=v; localStorage.setItem("sc_pat",v);
+  pat=v; pat_src=v; localStorage.setItem("sc_exit24_pat",v);
   document.getElementById("setupStatus").className="status ok";
   document.getElementById("setupStatus").textContent="Connecting...";
   document.getElementById("setupBar").classList.add("hidden");
@@ -234,12 +234,12 @@ async function checkPwd(){
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("appContent").style.display = "block";
     // Check if we have a valid PAT
-    const storedPat = localStorage.getItem("sc_pat");
+    const storedPat = localStorage.getItem("sc_exit24_pat");
     if(storedPat && storedPat.startsWith("pat")){ 
       pat = storedPat; pat_src = storedPat;
       document.getElementById("setupBar").classList.add("hidden");
       syncData();
-    } else if(pat && pat.startsWith("pat") && pat !== "pat34wZxlJo8scpaT.622b8ee410f70273e7c3afb4084cbe769785539bf32baf78edd95e2999fd4751"){
+    } else if(pat && pat.startsWith("pat")){
       pat_src = pat;
       document.getElementById("setupBar").classList.add("hidden");
       syncData();
@@ -257,8 +257,8 @@ const AT = "https://api.airtable.com/v0";
 const EXIT24_PROP_ID = "recCr4qeZCpOPrzsx";
 
 // Read-only PAT embedded
-let pat = "pat34wZxlJo8scpaT.622b8ee410f70273e7c3afb4084cbe769785539bf32baf78edd95e2999fd4751";
-let pat_src = localStorage.getItem("sc_pat") || pat;
+let pat = localStorage.getItem("sc_exit24_pat") || "";
+let pat_src = pat;
 
 const TENANTS_TABLE = "tblxQtRWCzmjcWeZO";
 const TENANT_FIELDS = {
@@ -565,7 +565,7 @@ window.addEventListener("DOMContentLoaded",()=>{
   if(sessionStorage.getItem(SESSION_KEY)==="1"){
     document.getElementById("loginScreen").style.display="none";
     document.getElementById("appContent").style.display="block";
-    const storedPat = localStorage.getItem("sc_pat");
+    const storedPat = localStorage.getItem("sc_exit24_pat");
     if(storedPat&&storedPat.startsWith("pat")){ pat=storedPat; pat_src=storedPat; }
     if((pat_src||pat)&&(pat_src||pat).startsWith("pat")){
       document.getElementById("patInput").value=pat_src||pat;
