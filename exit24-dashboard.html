@@ -263,6 +263,8 @@ const STATUS_LABELS = { "Target":"st-target","LOI":"st-loi","Lease Out":"st-leas
 
 let pat = localStorage.getItem("sc_exit24_pat") || "";
 let pat_src = pat;
+let allDeals=[], allActs=[], allMkt=[];
+let tenants = { phase1: [], phase2: [] };
 
 const TENANTS_TABLE = "tblxQtRWCzmjcWeZO";
 const TENANT_FIELDS = {
@@ -295,7 +297,6 @@ let ganttRows = JSON.parse(localStorage.getItem(GANTT_KEY) || "null") || [
 
 function saveGantt(){ localStorage.setItem(GANTT_KEY, JSON.stringify(ganttRows)); }
 
-let tenants = { phase1: [], phase2: [] };
 
 async function syncData(){
   const activePat = pat_src||pat; if(!activePat||!activePat.startsWith("pat"))return; pat_src=activePat;
@@ -468,7 +469,7 @@ function renderDashboard(){
             <th style="min-width:70px">Phase</th>
             ${MONTHS.map(m=>`<th style="min-width:55px;text-align:center">${m}</th>`).join("")}
           </tr></thead>
-          <tbody>${GANTT_ROWS.map(row=>`<tr>
+          <tbody>${ganttRows.map(row=>`<tr>
             <td><div class="gantt-row-label">${row.label}</div></td>
             <td><div class="gantt-row-phase">${row.phase}</div></td>
             ${MONTHS.map((_,i)=>{
