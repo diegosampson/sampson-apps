@@ -298,11 +298,7 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--gray-70
             <input type="month" id="mktMonth" />
           </div>
           <div class="form-field"><label>Crexi Views</label><input type="number" id="mktCrexi" value="0" min="0"/></div>
-          <div class="form-field"><label>TotalCommercial Views</label><input type="number" id="mktTC" value="0" min="0"/></div>
-          <div class="form-field"><label>CoStar Views</label><input type="number" id="mktCoStar" value="0" min="0"/></div>
           <div class="form-field"><label>Clasificados Views</label><input type="number" id="mktClasif" value="0" min="0"/></div>
-          <div class="form-field"><label>Other Views</label><input type="number" id="mktOther" value="0" min="0"/></div>
-          <div class="form-field"><label>OM Downloads</label><input type="number" id="mktDL" value="0" min="0"/></div>
           <div class="form-field"><label>Inquiries / Leads</label><input type="number" id="mktLeads" value="0" min="0"/></div>
           <div class="form-field"><label>Broker Outreach</label><input type="number" id="mktOutreach" value="0" min="0"/></div>
           <div class="form-field"><label>Site Visits / Tours</label><input type="number" id="mktTours" value="0" min="0"/></div>
@@ -326,7 +322,7 @@ const BASE_ID = 'appuE12tiGsHtfLuR';
 const TABLES = { properties:'tble75Hvhs5WVI26t', deals:'tblfqQb0kbBZm0w51', activities:'tblpRnPPxCVrSJsYs', marketing:'tblLYJ5x2NSTV90Ds', leads:'tblEJNkBNzW9YpPoH' };
 const AT = 'https://api.airtable.com/v0';
 
-const MKT_F = { entryName:'fldhJeEgZ26O5oJjA', property:'fld1cJnwFki0t0zYT', month:'fldmUKhAMUstuZAB9', crexi:'fldNhlAKjP76MJhb8', tc:'fldrjxv8WqwPX6dWe', costar:'fldZFOi21rG1kPExq', clasif:'fld6BQzXkM8MWzU3b', other:'fldNPStXWP7WobKQP', totalViews:'fldWzSy3p2bicZdWO', dl:'fldEjXoXBjaclcYf4', leads:'fldpqwFmuHgVEOwMU', sign:'fldqHrbFre7NK2k4C', webCalls:'fldot4Ntk3tW1H97k', outreach:'fldehDyUOXHDLpenn', tours:'fldY6H2ShZbnJPDI3', lois:'fldGEdf4F1OfRjKD5', notes:'fld3hqPA3sfbkADiU' };
+const MKT_F = { entryName:'fldhJeEgZ26O5oJjA', property:'fld1cJnwFki0t0zYT', month:'fldmUKhAMUstuZAB9', crexi:'fldNhlAKjP76MJhb8', clasif:'fld6BQzXkM8MWzU3b', totalViews:'fldWzSy3p2bicZdWO', totalInquiries:'fldEev5VQlzBI2tgh', leads:'fldpqwFmuHgVEOwMU', sign:'fldqHrbFre7NK2k4C', webCalls:'fldrjxv8WqwPX6dWe', outreach:'fldehDyUOXHDLpenn', tours:'fldY6H2ShZbnJPDI3', lois:'fldGEdf4F1OfRjKD5', notes:'fld3hqPA3sfbkADiU' };
 
 const PRIORITY_PROPS = ['Exit 24','Ceiba Ferry','Union Plaza','Canton Mall'];
 const PRIORITY_LABELS = { 'Exit 24':'Exit 24 — Dorado Retail Development', 'Ceiba Ferry':'Ceiba Ferry Terminal', 'Union Plaza':'Union Plaza — Hato Rey', 'Canton Mall':'El Cantón Mall — Bayamón' };
@@ -599,8 +595,15 @@ async function postUpdate(){
   const type=document.getElementById('updateType').value;
   const date=document.getElementById('updateDate').value;
   if(!note||!currentDetailKey){ showToast('Enter a note first','error'); return; }
+  const prop=allProperties.find(p=>(fv(p,'fldpn9sifUUTV8jmb')||'').toLowerCase().includes(key1(currentDetailKey)));
+  const fields={
+    'fldTCNZaWYNgVhYjb':(prop?fv(prop,'fldpn9sifUUTV8jmb'):currentDetailKey)+' — '+note,
+    'fld3bRwf1ooXKs2Uq':type,
+    'fldOCdpm5wYututlT':date?date+'T12:00:00.000Z':new Date().toISOString()
+  };
+  if(prop) fields['fldlGyCmsLGiYxU7i']=[prop.id];
   try{
-    const res=await fetch(`${AT}/${BASE_ID}/${TABLES.activities}`,{method:'POST',headers:getH(),body:JSON.stringify({records:[{fields:{'fldTCNZaWYNgVhYjb':currentDetailKey+' — '+note,'fld3bRwf1ooXKs2Uq':type,'fldOCdpm5wYututlT':date?date+'T12:00:00.000Z':new Date().toISOString()}}],typecast:true})});
+    const res=await fetch(`${AT}/${BASE_ID}/${TABLES.activities}`,{method:'POST',headers:getH(),body:JSON.stringify({records:[{fields}],typecast:true})});
     if(!res.ok)throw new Error((await res.json()).error?.message||'Failed');
     showToast('Update posted ✓');
     document.getElementById('updateNote').value='';
@@ -636,11 +639,7 @@ async function saveMarketingMonth(){
     [MKT_F.property]:[propId],
     [MKT_F.month]:monthVal+'-01',
     [MKT_F.crexi]:parseInt(document.getElementById('mktCrexi').value)||0,
-    [MKT_F.tc]:parseInt(document.getElementById('mktTC').value)||0,
-    [MKT_F.costar]:parseInt(document.getElementById('mktCoStar').value)||0,
     [MKT_F.clasif]:parseInt(document.getElementById('mktClasif').value)||0,
-    [MKT_F.other]:parseInt(document.getElementById('mktOther').value)||0,
-    [MKT_F.dl]:parseInt(document.getElementById('mktDL').value)||0,
     [MKT_F.leads]:parseInt(document.getElementById('mktLeads').value)||0,
     [MKT_F.sign]:parseInt(document.getElementById('mktSign').value)||0,
     [MKT_F.webCalls]:parseInt(document.getElementById('mktWebCalls').value)||0,
@@ -653,7 +652,7 @@ async function saveMarketingMonth(){
     const res=await fetch(`${AT}/${BASE_ID}/${TABLES.marketing}`,{method:'POST',headers:getH(),body:JSON.stringify({records:[{fields}],typecast:true})});
     if(!res.ok)throw new Error((await res.json()).error?.message||'Failed');
     showToast('Marketing stats saved ✓');
-    ['mktCrexi','mktTC','mktCoStar','mktClasif','mktOther','mktDL','mktLeads','mktSign','mktWebCalls','mktOutreach','mktTours','mktLOIs'].forEach(id=>document.getElementById(id).value=0);
+    ['mktCrexi','mktClasif','mktLeads','mktSign','mktWebCalls','mktOutreach','mktTours','mktLOIs'].forEach(id=>document.getElementById(id).value=0);
     document.getElementById('mktNotes').value='';
     await syncAll();
   }catch(e){ showToast('Failed: '+e.message,'error'); }
