@@ -421,14 +421,19 @@ function renderDashboard(){
   }).join('');
 }
 
+function getPortalBase(){
+  const origin=window.location.origin;
+  const path=window.location.pathname.replace(/\/[^/]*$/, '/');
+  return origin+path+'client-portal.html';
+}
+
 function getPortalUrl(prop){
   if(!prop)return '';
-  const base=window.location.href.replace('admin-portal.html','client-portal.html').split('?')[0];
-  return base+'?id='+prop.id;
+  return getPortalBase()+'?id='+prop.id;
 }
 
 function renderPortals(){
-  const base=window.location.href.replace('admin-portal.html','client-portal.html').split('?')[0];
+  const base=getPortalBase();
   const visible=allProperties.filter(p=>!fv(p,'fld1JZFgf4oCCKgwA'));
   if(!visible.length){ document.getElementById('portalsList').innerHTML=`<div class="no-portals">No properties loaded yet. Connect to Airtable to see portals.</div>`; return; }
   document.getElementById('portalsList').innerHTML=`
@@ -462,7 +467,7 @@ function renderPortals(){
 }
 
 function renderAllProperties(){
-  const base=window.location.href.replace('admin-portal.html','client-portal.html').split('?')[0];
+  const base=getPortalBase();
   document.getElementById('allPropsList').innerHTML=allProperties.length?allProperties.map(p=>{
     const name=fv(p,'fldpn9sifUUTV8jmb')||'Untitled';
     const city=fv(p,'fld3qzwSpJASfkZ3r')||'';
