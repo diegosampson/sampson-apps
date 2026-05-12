@@ -7,50 +7,36 @@
 <title>Client Portal — Sampson Commercial</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --navy:#001A4C; --blue:#265CFF; --orange:#FF9E59; --light:#EDF2F7;
-  --gray-100:#F7F9FC; --gray-200:#E8ECF2; --gray-500:#6B7A8D; --gray-700:#374151;
-  --green:#16a34a; --red:#dc2626; --font-head:"Poppins",sans-serif; --font-body:"Inter",sans-serif;
-}
+:root{--navy:#001A4C;--blue:#265CFF;--orange:#FF9E59;--light:#EDF2F7;--gray-100:#F7F9FC;--gray-200:#E8ECF2;--gray-500:#6B7A8D;--gray-700:#374151;--green:#16a34a;--red:#dc2626;--font-head:"Poppins",sans-serif;--font-body:"Inter",sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font-body);background:var(--gray-100);color:var(--gray-700);min-height:100vh;}
-
-/* HEADER */
 .header{background:var(--navy);padding:1.25rem 2rem 0;}
 .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;}
 .header-label{font-size:10px;font-weight:600;color:var(--orange);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px;}
-.header-client{font-family:var(--font-head);font-size:26px;font-weight:700;color:white;margin-bottom:4px;}
+.header-client{font-family:var(--font-head);font-size:24px;font-weight:700;color:white;margin-bottom:4px;}
 .header-prepared{font-size:12px;color:rgba(255,255,255,0.5);}
 .header-contact{text-align:right;color:rgba(255,255,255,0.65);font-size:12px;line-height:2;}
 .header-contact strong{color:white;font-family:var(--font-head);font-size:13px;display:block;}
-.nav-bar{display:flex;gap:2px;margin:0 -2rem;padding:0 2rem;}
+.nav-bar{display:flex;gap:2px;margin:0 -2rem;padding:0 2rem;overflow-x:auto;}
 .nav-btn{padding:10px 16px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.55);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.15s;font-family:var(--font-body);white-space:nowrap;}
 .nav-btn.active{color:white;border-bottom-color:var(--orange);}
 .nav-btn:hover:not(.active){color:rgba(255,255,255,0.85);}
-
-/* MAIN */
 .main{max-width:1100px;margin:0 auto;padding:1.5rem 2rem 4rem;}
 .page{display:none;}
 .page.active{display:block;}
 .page-title{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--navy);margin-bottom:4px;}
 .page-sub{font-size:13px;color:var(--gray-500);margin-bottom:1.5rem;}
-
-/* CARDS */
-.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:1.5rem;}
-.metric-card{background:white;border:1px solid var(--gray-200);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:8px;}
-.metric-icon{font-size:22px;}
-.metric-value{font-size:28px;font-family:var(--font-head);font-weight:700;color:var(--navy);}
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:1.5rem;}
+.metric-card{background:white;border:1px solid var(--gray-200);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;}
+.metric-icon{font-size:20px;}
+.metric-value{font-size:26px;font-family:var(--font-head);font-weight:700;color:var(--navy);}
 .metric-label{font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.06em;}
 .metric-sub{font-size:11px;color:var(--gray-500);}
-
-/* CARDS/PANELS */
 .panel{background:white;border:1px solid var(--gray-200);border-radius:12px;overflow:hidden;margin-bottom:1rem;}
 .panel-header{padding:14px 18px;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;}
 .panel-title{font-family:var(--font-head);font-size:14px;font-weight:600;color:var(--navy);}
 .panel-body{padding:18px;}
 .panel-body.no-pad{padding:0;}
-
-/* PROPERTY STATUS */
 .prop-row{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--gray-200);}
 .prop-row:last-child{border-bottom:none;}
 .prop-name{font-size:14px;font-weight:600;color:var(--navy);}
@@ -61,37 +47,29 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--gray-70
 .prop-stat-lbl{font-size:10px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;}
 .status-badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;}
 .status-active{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
-
-/* ACTIVITY */
 .act-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--gray-200);}
 .act-item:last-child{border-bottom:none;}
-.act-timeline{display:flex;flex-direction:column;align-items:center;gap:0;flex-shrink:0;padding-top:2px;}
+.act-timeline{display:flex;flex-direction:column;align-items:center;flex-shrink:0;padding-top:2px;}
 .act-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
 .act-line{width:2px;background:var(--gray-200);flex:1;margin-top:4px;}
 .act-body{flex:1;}
 .act-type{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;}
 .act-text{font-size:13px;color:var(--gray-700);line-height:1.5;}
 .act-date{font-size:11px;color:var(--gray-500);margin-top:4px;}
-
-/* TABLE */
 .data-table{width:100%;border-collapse:collapse;font-size:13px;}
 .data-table th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;background:var(--gray-100);border-bottom:1px solid var(--gray-200);}
 .data-table td{padding:12px 14px;border-bottom:1px solid var(--gray-200);vertical-align:middle;}
 .data-table tr:last-child td{border-bottom:none;}
-
-/* KANBAN */
 .kanban-wrap{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;}
-.kanban-col{flex-shrink:0;width:200px;}
+.kanban-col{flex-shrink:0;width:190px;}
 .kanban-col-header{padding:8px 12px;border-radius:8px 8px 0 0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;display:flex;align-items:center;justify-content:space-between;}
-.kanban-col-body{background:var(--gray-100);border:1px solid var(--gray-200);border-top:none;border-radius:0 0 8px 8px;padding:8px;min-height:120px;display:flex;flex-direction:column;gap:8px;}
+.kanban-col-body{background:var(--gray-100);border:1px solid var(--gray-200);border-top:none;border-radius:0 0 8px 8px;padding:8px;min-height:100px;display:flex;flex-direction:column;gap:8px;}
 .kanban-card{background:white;border:1px solid var(--gray-200);border-radius:8px;padding:10px 12px;}
 .kanban-card-name{font-size:13px;font-weight:500;color:var(--navy);margin-bottom:4px;}
 .kanban-card-meta{font-size:11px;color:var(--gray-500);}
-
-/* SITE VISITS */
 .visit-row{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--gray-200);}
 .visit-row:last-child{border-bottom:none;}
-.visit-date-box{background:var(--navy);color:white;border-radius:8px;padding:8px 12px;text-align:center;flex-shrink:0;min-width:54px;}
+.visit-date-box{background:var(--navy);color:white;border-radius:8px;padding:8px 12px;text-align:center;flex-shrink:0;min-width:52px;}
 .visit-date-day{font-size:20px;font-weight:700;font-family:var(--font-head);line-height:1;}
 .visit-date-mon{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;opacity:0.7;margin-top:2px;}
 .visit-body{flex:1;}
@@ -100,8 +78,6 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--gray-70
 .visit-status{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;}
 .visit-completed{background:#f0fdf4;color:#15803d;}
 .visit-scheduled{background:#fffbeb;color:#b45309;}
-
-/* UPDATES */
 .update-item{padding:16px 0;border-bottom:1px solid var(--gray-200);}
 .update-item:last-child{border-bottom:none;}
 .update-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
@@ -109,8 +85,6 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--gray-70
 .update-from{font-size:13px;font-weight:600;color:var(--navy);}
 .update-date{font-size:11px;color:var(--gray-500);}
 .update-text{font-size:13px;color:var(--gray-700);line-height:1.6;padding-left:44px;}
-
-/* MARKETING BARS */
 .mkt-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:1.5rem;}
 .mkt-month-row{padding:12px 0;border-bottom:1px solid var(--gray-200);display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
 .mkt-month-row:last-child{border-bottom:none;}
@@ -118,15 +92,11 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--gray-70
 .mkt-month-stat{display:flex;flex-direction:column;align-items:center;min-width:60px;}
 .mkt-month-stat-num{font-size:16px;font-weight:700;color:var(--navy);}
 .mkt-month-stat-lbl{font-size:10px;color:var(--gray-500);text-transform:uppercase;}
-
-/* BROKER CARD */
 .broker-card{background:var(--navy);border-radius:14px;padding:20px 24px;display:flex;align-items:center;gap:16px;margin-top:2rem;}
 .broker-avatar{width:48px;height:48px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:16px;font-weight:700;color:white;flex-shrink:0;}
 .broker-name{font-family:var(--font-head);font-size:15px;font-weight:700;color:white;}
 .broker-title{font-size:11px;color:rgba(255,255,255,0.55);margin-top:2px;}
 .broker-contact{margin-left:auto;text-align:right;font-size:12px;color:rgba(255,255,255,0.7);line-height:2;}
-
-/* DOCS */
 .doc-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--gray-200);}
 .doc-row:last-child{border-bottom:none;}
 .doc-icon{font-size:22px;flex-shrink:0;}
@@ -134,42 +104,23 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--gray-70
 .doc-meta{font-size:11px;color:var(--gray-500);margin-top:2px;}
 .doc-link{margin-left:auto;color:var(--blue);font-size:12px;font-weight:500;text-decoration:none;}
 .doc-link:hover{text-decoration:underline;}
-
-/* EMPTY */
 .empty{text-align:center;padding:2.5rem;color:var(--gray-500);font-size:13px;}
 .empty-icon{font-size:32px;margin-bottom:10px;}
-
-/* LOADING */
 .loading{padding:3rem;text-align:center;color:var(--gray-500);}
 .spinner{width:32px;height:32px;border:3px solid var(--gray-200);border-top-color:var(--blue);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
-/* PAT SETUP */
-.pat-wrap{max-width:460px;margin:4rem auto;background:white;border-radius:14px;border:1px solid var(--gray-200);padding:2rem;box-shadow:0 4px 20px rgba(0,0,0,0.06);}
-.pat-wrap h2{font-family:var(--font-head);color:var(--navy);font-size:18px;margin-bottom:8px;}
-.pat-wrap p{font-size:13px;color:var(--gray-500);margin-bottom:1.25rem;line-height:1.7;}
-.pat-wrap input{width:100%;border:1px solid var(--gray-200);border-radius:8px;padding:10px 14px;font-size:13px;font-family:var(--font-body);margin-bottom:10px;}
-.pat-wrap input:focus{outline:none;border-color:var(--blue);}
-.pat-wrap button{width:100%;background:var(--navy);color:white;border:none;padding:11px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body);}
-.pat-status{font-size:12px;margin-top:8px;color:var(--red);}
-
 .error-wrap{text-align:center;padding:4rem 2rem;}
 .error-wrap h2{font-family:var(--font-head);color:var(--navy);font-size:20px;margin-bottom:10px;}
 .error-wrap p{color:var(--gray-500);font-size:14px;line-height:1.7;}
-
+.stat-pill{background:white;border:1px solid var(--gray-200);border-radius:10px;padding:12px 20px;text-align:center;min-width:100px;}
+.stat-pill-num{font-size:22px;font-weight:700;font-family:var(--font-head);}
+.stat-pill-lbl{font-size:11px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;margin-top:4px;}
 @media(max-width:640px){.main{padding:1rem;}.metrics-grid{grid-template-columns:1fr 1fr;}.broker-card{flex-direction:column;text-align:center;}.broker-contact{margin-left:0;text-align:center;}}
 </style>
 </head>
 <body>
 
 <div id="loadingScreen" class="loading" style="padding:5rem"><div class="spinner"></div>Loading your portal...</div>
-<div id="patSetup" class="pat-wrap" style="display:none">
-  <h2>Portal Access</h2>
-  <p>This portal is configured by your broker. Enter the access token to activate. Contact Diego Sampson at diego@sampsonre.com if you need assistance.</p>
-  <input type="password" id="clientPat" placeholder="Enter access token..." autocomplete="off"/>
-  <button onclick="saveClientPat()">Activate Portal</button>
-  <div id="patStatus" class="pat-status"></div>
-</div>
 <div id="errorScreen" style="display:none" class="error-wrap">
   <div style="font-size:48px;margin-bottom:16px">🔒</div>
   <h2>Portal Not Found</h2>
@@ -206,7 +157,7 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--gray-70
     <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
       <div class="page-title">Executive Summary</div>
-      <div class="page-sub">Portfolio-level performance overview</div>
+      <div class="page-sub" id="dashSubtitle">Portfolio-level performance overview</div>
       <div class="metrics-grid" id="dashMetrics"></div>
       <div class="panel">
         <div class="panel-header"><div class="panel-title">PROPERTY STATUS</div></div>
@@ -244,12 +195,12 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--gray-70
     <div class="page" id="page-prospects">
       <div class="page-title">Prospect Pipeline</div>
       <div class="page-sub" id="prospectsSubtitle">Active prospects across all stages</div>
-      <div style="display:flex;gap:16px;margin-bottom:1rem;" id="prospectStats"></div>
+      <div style="display:flex;gap:16px;margin-bottom:1rem;flex-wrap:wrap;" id="prospectStats"></div>
       <div class="kanban-wrap" id="prospectsKanban"></div>
       <div class="panel" style="margin-top:1rem">
         <div class="panel-header"><div class="panel-title">All Inquiries</div></div>
         <div class="panel-body no-pad">
-          <table class="data-table" id="leadsTable"><thead><tr><th>Name</th><th>Source</th><th>Date</th><th>Status</th><th>Interest</th></tr></thead><tbody id="leadsBody"></tbody></table>
+          <table class="data-table"><thead><tr><th>Name</th><th>Source</th><th>Date</th><th>Status</th><th>Interest</th></tr></thead><tbody id="leadsBody"></tbody></table>
         </div>
       </div>
     </div>
@@ -275,8 +226,8 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--gray-70
         <div class="broker-title">Principal Broker &middot; Sampson Commercial Real Estate &middot; Florida & Puerto Rico</div>
       </div>
       <div class="broker-contact">
-        diego@sampsonre.com<br>407-724-1167<br>sampsonre.com<br>
-        <a id="contactBtn" href="#" style="display:inline-block;margin-top:8px;background:var(--orange);color:var(--navy);padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;">✉ Send Message</a>
+        diego@sampsonre.com<br>407-724-1167<br>sampsonre.com
+        <br><a id="contactBtn2" href="mailto:diego@sampsonre.com" style="display:inline-block;margin-top:8px;background:var(--orange);color:var(--navy);padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;">✉ Send Message</a>
       </div>
     </div>
   </div>
@@ -286,53 +237,21 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--gray-70
 const BASE_ID = "appuE12tiGsHtfLuR";
 const AT = "https://api.airtable.com/v0";
 const TABLES = { properties:"tble75Hvhs5WVI26t", deals:"tblfqQb0kbBZm0w51", activities:"tblpRnPPxCVrSJsYs", marketing:"tblLYJ5x2NSTV90Ds", leads:"tblEJNkBNzW9YpPoH" };
-const MKT = { property:"fld1cJnwFki0t0zYT", month:"fldmUKhAMUstuZAB9", crexi:"fldNhlAKjP76MJhb8", tc:"fldrjxv8WqwPX6dWe", costar:"fldZFOi21rG1kPExq", clasif:"fld6BQzXkM8MWzU3b", other:"fldNPStXWP7WobKQP", totalViews:"fldWzSy3p2bicZdWO", dl:"fldEjXoXBjaclcYf4", leads:"fldpqwFmuHgVEOwMU", sign:"fldqHrbFre7NK2k4C", webCalls:"fldot4Ntk3tW1H97k", outreach:"fldehDyUOXHDLpenn", tours:"fldY6H2ShZbnJPDI3", lois:"fldGEdf4F1OfRjKD5", notes:"fld3hqPA3sfbkADiU" };
-
-// Portal config is loaded from Airtable Properties table using record ID
-const PRIVATE_FIELD = "fld1JZFgf4oCCKgwA";
-const PROP_FIELDS = {
-  name: "fldpn9sifUUTV8jmb",
-  address: "flddosmCbsmj7hYuM",
-  city: "fld3qzwSpJASfkZ3r",
-  state: "fldAx8FIxumN9CdXG",
-  market: "fldVjprlXVct0Gnz1",
-  type: "fld8ubzef720mR1qa",
-  subtype: "fldUjjdHiMdWEW5jp",
-  status: "fldSnPz8yyqnp8is7",
-  role: "fldd1sDfyFa4iNCqU",
-  sf: "fldxoT36S88BWYQu8",
-  price: "fldhQ06nbrn8PuoPA",
-  rate: "fldrYx5rxD16LD2qC",
-  private: "fld1JZFgf4oCCKgwA",
-  deals: "fld5teqWZfU2JptLT",
-  mktStats: "fldkGQLRS84s1BuI3",
-  leads: "fld3pRdswKPBhS9Jf",
-  activities: "fldEnAceR7ZCNX5ya",
-};
-
-const TYPE_COLORS = { "Tour / Site Visit":"#10b981","Call":"#3b82f6","Email":"#8b5cf6","LOI Received":"#ef4444","Lease Executed":"#16a34a","Meeting":"#f59e0b","General Update":"#6b7280","Marketing Update":"#265CFF" };
+const MKT = { property:"fld1cJnwFki0t0zYT", month:"fldmUKhAMUstuZAB9", totalViews:"fldWzSy3p2bicZdWO", dl:"fldEjXoXBjaclcYf4", leads:"fldpqwFmuHgVEOwMU", sign:"fldqHrbFre7NK2k4C", outreach:"fldehDyUOXHDLpenn", tours:"fldY6H2ShZbnJPDI3", lois:"fldGEdf4F1OfRjKD5", notes:"fld3hqPA3sfbkADiU" };
+const PROP_FIELDS = { name:"fldpn9sifUUTV8jmb", address:"flddosmCbsmj7hYuM", city:"fld3qzwSpJASfkZ3r", market:"fldVjprlXVct0Gnz1", type:"fld8ubzef720mR1qa", subtype:"fldUjjdHiMdWEW5jp", status:"fldSnPz8yyqnp8is7", sf:"fldxoT36S88BWYQu8", price:"fldhQ06nbrn8PuoPA", rate:"fldrYx5rxD16LD2qC", private:"fld1JZFgf4oCCKgwA" };
+const TYPE_COLORS = { "Tour / Site Visit":"#10b981","Call":"#3b82f6","Email":"#8b5cf6","LOI Received":"#ef4444","LOI Sent":"#f97316","Lease Executed":"#16a34a","Meeting":"#f59e0b","General Update":"#6b7280","Marketing Update":"#265CFF","Prospect Inquiry":"#8b5cf6" };
 const PROSPECT_STAGES = ["New Lead","Contacted","Interested","Underwriting","Site Visit","LOI","Closed"];
-const STAGE_COLORS = { "New Lead":["#EFF6FF","#1D4ED8"],"Contacted":["#F0FDF4","#15803D"],"Interested":["#FFFBEB","#B45309"],"Underwriting":["#F5F3FF","#6D28D9"],"Site Visit":["#FFF7ED","#C2410C"],"LOI":["#FEF2F2","#DC2626"],"Closed":["#F0FDF4","#15803D"] };
+const STAGE_COLORS = { "New Lead":["#EFF6FF","#1D4ED8"],"Contacted":["#F0FDF4","#15803D"],"Interested":["#FFFBEB","#B45309"],"Underwriting":["#F5F3FF","#6D28D9"],"Site Visit":["#FFF7ED","#C2410C"],"LOI":["#FEF2F2","#DC2626"],"Closed":["#ECFDF5","#065F46"] };
 
-// Read-only PAT — embedded directly, clients never prompted
-let pat = "pat34wZxlJo8scpaT.622b8ee410f70273e7c3afb4084cbe769785539bf32baf78edd95e2999fd4751";
-let propId = "";
-let clientId = "", cfg = null;
+// Read-only PAT embedded — clients never prompted
+const pat = "patwr5ewYdJi99qNJ.04afc528752db6f0e001c53611b8ff84c2cb0c31f4c75a2f117c30473f063079";
+let propId = "", cfg = null;
 let allProps=[], allDeals=[], allActs=[], allMkt=[], allLeads=[];
 
-function fv(r,f){ const v=(r.fields||r.cellValuesByFieldId||{})[f]; if(v&&typeof v==="object"&&v.name)return v.name; if(Array.isArray(v))return v; return v; }
+function fv(r,f){ const v=(r.fields||{})[f]; if(v&&typeof v==="object"&&!Array.isArray(v)&&v.name)return v.name; return v; }
 function fmt$(v){ if(!v)return "—"; return "$"+Number(v).toLocaleString("en-US",{maximumFractionDigits:0}); }
 function fmtDate(d){ if(!d)return "—"; return new Date(d+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}); }
 function fmtMonth(d){ if(!d)return "—"; return new Date(d+"T00:00:00").toLocaleDateString("en-US",{month:"long",year:"numeric"}); }
-
-function saveClientPat(){
-  const v=document.getElementById("clientPat").value.trim();
-  if(!v){document.getElementById("patStatus").textContent="Enter a token.";return;}
-  pat=v; localStorage.setItem("sc_ro_pat",v);
-  document.getElementById("patSetup").style.display="none";
-  document.getElementById("loadingScreen").style.display="block";
-  loadPortal();
-}
 
 async function fetchAll(tid){
   let recs=[],offset=null;
@@ -346,45 +265,26 @@ async function fetchAll(tid){
   return recs;
 }
 
-function matchesCfg(text){
-  if(!text||!cfg)return false;
-  const t=text.toLowerCase();
-  return cfg.keywords.some(k=>t.includes(k));
-}
-
-function matchesPropId(linkedArr){
-  if(!linkedArr||!Array.isArray(linkedArr))return false;
-  return linkedArr.some(l=>(l.id||l)===propId);
-}
+function matchesPropId(linkedArr){ if(!linkedArr||!Array.isArray(linkedArr))return false; return linkedArr.some(l=>(l.id||l)===propId); }
+function matchesCfg(text){ if(!text||!cfg)return false; return cfg.keywords.some(k=>text.toLowerCase().includes(k)); }
 
 async function loadPortal(){
   try{
-    // Fetch the specific property record first
     const propRes=await fetch(AT+"/"+BASE_ID+"/"+TABLES.properties+"/"+propId+"?returnFieldsByFieldId=true",{headers:{"Authorization":"Bearer "+pat}});
-    if(!propRes.ok){
-      const e=await propRes.json();
-      throw new Error(e.error?.message||"Property not found");
-    }
+    if(!propRes.ok) throw new Error("Property not found");
     const propRecord=await propRes.json();
     const pf=propRecord.fields||{};
-    
-    // Check if private
-    if(pf[PRIVATE_FIELD]===true){
-      document.getElementById("loadingScreen").style.display="none";
-      document.getElementById("errorScreen").style.display="block";
-      return;
-    }
-    
-    // Build cfg from property record
+    if(pf[PROP_FIELDS.private]===true){ document.getElementById("loadingScreen").style.display="none"; document.getElementById("errorScreen").style.display="block"; return; }
+
     cfg={
-      id: propRecord.id,
-      name: pf[PROP_FIELDS.name]||"Property Portal",
-      type: [pf[PROP_FIELDS.subtype]?.name||pf[PROP_FIELDS.type]?.name||"", pf[PROP_FIELDS.sf]?Number(pf[PROP_FIELDS.sf]).toLocaleString()+" SF":""].filter(Boolean).join(" · "),
-      propName: pf[PROP_FIELDS.name]||"",
-      address: pf[PROP_FIELDS.address]||"",
-      city: pf[PROP_FIELDS.city]||"",
-      market: pf[PROP_FIELDS.market]?.name||"",
-      keywords: [(pf[PROP_FIELDS.name]||"").toLowerCase()],
+      id:propRecord.id,
+      name:fv(propRecord,PROP_FIELDS.name)||"Property Portal",
+      type:[fv(propRecord,PROP_FIELDS.subtype)||fv(propRecord,PROP_FIELDS.type)||"", pf[PROP_FIELDS.sf]?Number(pf[PROP_FIELDS.sf]).toLocaleString()+" SF":""].filter(Boolean).join(" · "),
+      propName:fv(propRecord,PROP_FIELDS.name)||"",
+      address:fv(propRecord,PROP_FIELDS.address)||"",
+      city:fv(propRecord,PROP_FIELDS.city)||"",
+      market:fv(propRecord,PROP_FIELDS.market)||"",
+      keywords:[(fv(propRecord,PROP_FIELDS.name)||"").toLowerCase()],
       docs:[],
     };
 
@@ -392,14 +292,16 @@ async function loadPortal(){
       fetchAll(TABLES.properties),fetchAll(TABLES.deals),
       fetchAll(TABLES.activities),fetchAll(TABLES.marketing),fetchAll(TABLES.leads)
     ]);
+
     document.getElementById("loadingScreen").style.display="none";
     document.getElementById("portalContent").style.display="block";
     document.getElementById("clientName").textContent=cfg.name;
     document.title=cfg.name+" — Sampson Commercial";
     const subject=encodeURIComponent(cfg.name+" — Portal Inquiry");
     const body=encodeURIComponent("Hi Diego,\n\nI have a question regarding "+cfg.name+".\n\n");
-    const contactBtn=document.getElementById("contactBtn");
-    if(contactBtn) contactBtn.href="mailto:diego@sampsonre.com?subject="+subject+"&body="+body;
+    const mailto="mailto:diego@sampsonre.com?subject="+subject+"&body="+body;
+    document.getElementById("contactBtn").href=mailto;
+    document.getElementById("contactBtn2").href=mailto;
     renderAll();
   }catch(e){
     document.getElementById("loadingScreen").innerHTML=`<div style="color:#dc2626;font-size:14px">Error: ${e.message}<br><br><button onclick="location.reload()" style="margin-top:10px;padding:8px 16px;background:#001A4C;color:white;border:none;border-radius:6px;cursor:pointer">Retry</button></div>`;
@@ -409,79 +311,73 @@ async function loadPortal(){
 function renderAll(){ renderDashboard(); renderActivity(); renderMarketing(); renderSiteVisits(); renderProspects(); renderDocuments(); renderUpdates(); }
 
 function renderDashboard(){
-  const myMkt=allMkt.filter(m=>{const l=fv(m,MKT.property);return Array.isArray(l)&&l.some(x=>(x.name||x).toLowerCase().includes(cfg.keywords[0]));});
+  // Filter everything to THIS property only
+  const myActs=allActs.filter(a=>matchesPropId(fv(a,"fldlGyCmsLGiYxU7i")));
+  const myVisits=myActs.filter(a=>fv(a,"fld3bRwf1ooXKs2Uq")==="Tour / Site Visit");
   const myLeads=allLeads.filter(l=>matchesCfg(fv(l,"fldsf8sOdxxcVkF3A")||fv(l,"fldoSNNBoDrMiwh3Y")));
   const myDeals=allDeals.filter(d=>matchesCfg(fv(d,"fldwx2kEFyoudmE4m")));
-  const myActs=allActs.filter(a=>{
-    const linked=fv(a,"fldlGyCmsLGiYxU7i");
-    if(!linked||!Array.isArray(linked))return false;
-    return linked.some(l=>(l.id||l)===propId);
-  });
-  const myVisits=myActs.filter(a=>fv(a,"fld3bRwf1ooXKs2Uq")==="Tour / Site Visit");
+  const myMkt=allMkt.filter(m=>{ const l=fv(m,MKT.property); return Array.isArray(l)&&l.some(x=>(x.name||x).toLowerCase().includes(cfg.keywords[0])); });
   const totalViews=myMkt.reduce((s,m)=>s+(fv(m,MKT.totalViews)||0),0);
   const totalDL=myMkt.reduce((s,m)=>s+(fv(m,MKT.dl)||0),0);
   const totalLOIs=myMkt.reduce((s,m)=>s+(fv(m,MKT.lois)||0),0);
   const totalOutreach=myMkt.reduce((s,m)=>s+(fv(m,MKT.outreach)||0),0);
+  const loiDeals=myDeals.filter(d=>fv(d,"fldnueQJxWwypnCVJ")==="LOI").length;
 
+  document.getElementById("dashSubtitle").textContent=cfg.address?(cfg.address+(cfg.city?" · "+cfg.city:"")):"Portfolio-level performance overview";
   document.getElementById("dashMetrics").innerHTML=[
-    {icon:"🏢",v:1,l:"Properties"},
-    {icon:"📈",v:myActs.length,l:"Total Activity"},
-    {icon:"👁",v:totalViews,l:"Listing Views"},
-    {icon:"📥",v:totalDL,l:"OM Downloads"},
-    {icon:"📞",v:totalOutreach,l:"Broker Outreach",sub:"calls, emails & follow-ups"},
+    {icon:"📈",v:myActs.length,l:"Total Activity",sub:"logged events"},
+    {icon:"👁",v:totalViews||"—",l:"Listing Views",sub:"all platforms"},
+    {icon:"📥",v:totalDL||"—",l:"OM Downloads"},
+    {icon:"📞",v:totalOutreach||"—",l:"Broker Outreach",sub:"calls, emails & follow-ups"},
     {icon:"🚶",v:myVisits.length,l:"Site Visits",sub:"completed tours"},
     {icon:"👥",v:myLeads.length,l:"Active Prospects"},
-    {icon:"📄",v:totalLOIs,l:"LOIs / Offers"},
+    {icon:"📄",v:totalLOIs||loiDeals||"—",l:"LOIs / Offers"},
+    {icon:"✅",v:myDeals.filter(d=>fv(d,"fldnueQJxWwypnCVJ")==="Closed").length||"—",l:"Closed Deals"},
   ].map(m=>`<div class="metric-card"><div class="metric-icon">${m.icon}</div><div class="metric-value">${m.v}</div><div class="metric-label">${m.l}</div>${m.sub?`<div class="metric-sub">${m.sub}</div>`:""}</div>`).join("");
 
   document.getElementById("propStatus").innerHTML=`<div class="prop-row">
-    <div><div class="prop-name">${cfg.propName}</div><div class="prop-meta">${cfg.type}</div></div>
+    <div><div class="prop-name">${cfg.propName}</div><div class="prop-meta">${cfg.type}${cfg.city?" · "+cfg.city:""}</div></div>
     <div class="prop-stats">
-      <div class="prop-stat"><div class="prop-stat-num">${allActs.length}</div><div class="prop-stat-lbl">Updates</div></div>
+      <div class="prop-stat"><div class="prop-stat-num">${myActs.length}</div><div class="prop-stat-lbl">Updates</div></div>
       <div class="prop-stat"><div class="prop-stat-num">${myLeads.length}</div><div class="prop-stat-lbl">Prospects</div></div>
       <div class="prop-stat"><div class="prop-stat-num">${myVisits.length}</div><div class="prop-stat-lbl">Visits</div></div>
+      <div class="prop-stat"><div class="prop-stat-num">${totalViews||0}</div><div class="prop-stat-lbl">Views</div></div>
       <span class="status-badge status-active">Active</span>
     </div>
   </div>`;
 }
 
 function renderActivity(){
-  const acts=[...allActs].filter(a=>{
-    const linked=fv(a,"fldlGyCmsLGiYxU7i");
-    if(!linked||!Array.isArray(linked))return false;
-    return linked.some(l=>(l.id||l)===propId);
-  }).sort((a,b)=>(fv(b,"fldOCdpm5wYututlT")||"").localeCompare(fv(a,"fldOCdpm5wYututlT")||""));
+  const acts=[...allActs].filter(a=>matchesPropId(fv(a,"fldlGyCmsLGiYxU7i")))
+    .sort((a,b)=>(fv(b,"fldOCdpm5wYututlT")||"").localeCompare(fv(a,"fldOCdpm5wYututlT")||""));
   document.getElementById("activityList").innerHTML=acts.length?acts.map((a,i)=>{
     const type=fv(a,"fld3bRwf1ooXKs2Uq")||"Update";
     const color=TYPE_COLORS[type]||"#6b7280";
     const dt=fv(a,"fldOCdpm5wYututlT");
-    const isLast=i===acts.length-1;
     return `<div class="act-item">
-      <div class="act-timeline"><div class="act-dot" style="background:${color}"></div>${!isLast?`<div class="act-line"></div>`:""}</div>
+      <div class="act-timeline"><div class="act-dot" style="background:${color}"></div>${i<acts.length-1?`<div class="act-line"></div>`:""}</div>
       <div class="act-body">
         <div class="act-type" style="color:${color}">${type}</div>
         <div class="act-text">${fv(a,"fldTCNZaWYNgVhYjb")||"Activity logged"}</div>
-        <div class="act-date">${dt?new Date(dt).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"}):"—"}</div>
+        <div class="act-date">${dt?new Date(dt).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}):"—"}</div>
       </div>
     </div>`;
   }).join(""):`<div class="empty"><div class="empty-icon">📋</div>No activity recorded yet.</div>`;
 }
 
 function renderMarketing(){
-  const myMkt=allMkt.filter(m=>{const l=fv(m,MKT.property);return Array.isArray(l)&&l.some(x=>(x.name||x).toLowerCase().includes(cfg.keywords[0]));});
+  const myMkt=allMkt.filter(m=>{ const l=fv(m,MKT.property); return Array.isArray(l)&&l.some(x=>(x.name||x).toLowerCase().includes(cfg.keywords[0])); });
   myMkt.sort((a,b)=>(fv(b,MKT.month)||"").localeCompare(fv(a,MKT.month)||""));
   const totalViews=myMkt.reduce((s,m)=>s+(fv(m,MKT.totalViews)||0),0);
   const totalDL=myMkt.reduce((s,m)=>s+(fv(m,MKT.dl)||0),0);
   const totalInq=myMkt.reduce((s,m)=>s+(fv(m,MKT.leads)||0),0);
   const totalLOIs=myMkt.reduce((s,m)=>s+(fv(m,MKT.lois)||0),0);
-
   document.getElementById("mktCards").innerHTML=[
     {v:totalViews,l:"Total Views",sub:"all channels"},
     {v:totalDL,l:"OM Downloads"},
     {v:totalInq,l:"Inquiries"},
     {v:totalLOIs,l:"LOIs Received"},
   ].map(m=>`<div class="metric-card"><div class="metric-value">${m.v}</div><div class="metric-label">${m.l}</div>${m.sub?`<div class="metric-sub">${m.sub}</div>`:""}</div>`).join("");
-
   document.getElementById("mktMonthly").innerHTML=myMkt.length?`<div style="padding:0 18px">${myMkt.map(m=>`
     <div class="mkt-month-row">
       <div class="mkt-month-label">${fmtMonth(fv(m,MKT.month))}</div>
@@ -496,27 +392,18 @@ function renderMarketing(){
 }
 
 function renderSiteVisits(){
-  const visits=allActs.filter(a=>{
-    const linked=fv(a,"fldlGyCmsLGiYxU7i");
-    if(!linked||!Array.isArray(linked))return false;
-    return linked.some(l=>(l.id||l)===propId) && fv(a,"fld3bRwf1ooXKs2Uq")==="Tour / Site Visit";
-  }).sort((a,b)=>(fv(b,"fldOCdpm5wYututlT")||"").localeCompare(fv(a,"fldOCdpm5wYututlT")||""));
-  const completed=visits.filter(v=>fv(v,"fldy6vA3G18CQYCjB")==="Completed"||fv(v,"fldy6vA3G18CQYCjB")==="Done").length;
-
+  const visits=allActs.filter(a=>matchesPropId(fv(a,"fldlGyCmsLGiYxU7i"))&&fv(a,"fld3bRwf1ooXKs2Uq")==="Tour / Site Visit")
+    .sort((a,b)=>(fv(b,"fldOCdpm5wYututlT")||"").localeCompare(fv(a,"fldOCdpm5wYututlT")||""));
   document.getElementById("visitStats").innerHTML=[
+    {n:visits.length,l:"Total Visits",c:"var(--blue)"},
     {n:visits.length,l:"Completed",c:"var(--green)"},
     {n:0,l:"Scheduled",c:"var(--orange)"},
-    {n:0,l:"Follow-Up",c:"var(--orange)"},
-  ].map(s=>`<div style="background:white;border:1px solid var(--gray-200);border-radius:10px;padding:14px 20px;text-align:center;min-width:100px;"><div style="font-size:22px;font-weight:700;color:${s.c};font-family:var(--font-head)">${s.n}</div><div style="font-size:11px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;margin-top:4px">${s.l}</div></div>`).join("");
-
+  ].map(s=>`<div class="stat-pill"><div class="stat-pill-num" style="color:${s.c}">${s.n}</div><div class="stat-pill-lbl">${s.l}</div></div>`).join("");
   document.getElementById("visitList").innerHTML=visits.length?visits.map(v=>{
     const dt=fv(v,"fldOCdpm5wYututlT");
     const d=dt?new Date(dt):null;
     return `<div class="visit-row">
-      <div class="visit-date-box">
-        <div class="visit-date-day">${d?d.getDate():"—"}</div>
-        <div class="visit-date-mon">${d?d.toLocaleDateString("en-US",{month:"short"}):""}</div>
-      </div>
+      <div class="visit-date-box"><div class="visit-date-day">${d?d.getDate():"—"}</div><div class="visit-date-mon">${d?d.toLocaleDateString("en-US",{month:"short"}):""}</div></div>
       <div class="visit-body">
         <div class="visit-prospect">${fv(v,"fldTCNZaWYNgVhYjb")||"Site Visit"}</div>
         <div class="visit-meta">${fv(v,"fldwjqtMQ89cnwqJV")||""}</div>
@@ -530,25 +417,20 @@ function renderProspects(){
   const leads=allLeads.filter(l=>matchesCfg(fv(l,"fldsf8sOdxxcVkF3A")||fv(l,"fldoSNNBoDrMiwh3Y")));
   const lois=leads.filter(l=>fv(l,"fldAPaqOlD7oY50dN")==="LOI").length;
   const closed=leads.filter(l=>fv(l,"fldAPaqOlD7oY50dN")==="Closed").length;
-
   document.getElementById("prospectStats").innerHTML=[
     {n:leads.length,l:"Active Prospects",c:"var(--blue)"},
     {n:lois,l:"LOIs",c:"var(--orange)"},
     {n:closed,l:"Closed",c:"var(--green)"},
-  ].map(s=>`<div style="background:white;border:1px solid var(--gray-200);border-radius:10px;padding:14px 20px;text-align:center;min-width:100px;"><div style="font-size:22px;font-weight:700;color:${s.c};font-family:var(--font-head)">${s.n}</div><div style="font-size:11px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;margin-top:4px">${s.l}</div></div>`).join("");
+  ].map(s=>`<div class="stat-pill"><div class="stat-pill-num" style="color:${s.c}">${s.n}</div><div class="stat-pill-lbl">${s.l}</div></div>`).join("");
   document.getElementById("prospectsSubtitle").textContent=leads.length+" active prospects across "+PROSPECT_STAGES.length+" stages";
-
-  // Kanban
   document.getElementById("prospectsKanban").innerHTML=PROSPECT_STAGES.map(stage=>{
     const sc=STAGE_COLORS[stage]||["#f1f5f9","#475569"];
     const cards=leads.filter(l=>fv(l,"fldAPaqOlD7oY50dN")===stage);
     return `<div class="kanban-col">
       <div class="kanban-col-header" style="background:${sc[0]};color:${sc[1]}">${stage}<span>${cards.length}</span></div>
-      <div class="kanban-col-body">${cards.length?cards.map(l=>`<div class="kanban-card"><div class="kanban-card-name">${fv(l,"fldsf8sOdxxcVkF3A")||"—"}</div><div class="kanban-card-meta">${fv(l,"fldoSNNBoDrMiwh3Y")||""} · ${fmtDate(fv(l,"fldxckDZlB43PyOPJ"))}</div></div>`).join(""):`<div style="text-align:center;padding:1rem;font-size:12px;color:var(--gray-500)">Empty</div>`}</div>
+      <div class="kanban-col-body">${cards.length?cards.map(l=>`<div class="kanban-card"><div class="kanban-card-name">${fv(l,"fldsf8sOdxxcVkF3A")||"—"}</div><div class="kanban-card-meta">${fv(l,"fldoSNNBoDrMiwh3Y")||""}</div></div>`).join(""):`<div style="text-align:center;padding:1rem;font-size:12px;color:var(--gray-500)">Empty</div>`}</div>
     </div>`;
   }).join("");
-
-  // Table
   document.getElementById("leadsBody").innerHTML=leads.length?leads.map(l=>`<tr>
     <td style="font-weight:500">${fv(l,"fldsf8sOdxxcVkF3A")||"—"}</td>
     <td>${fv(l,"fldJPwkvogQLXvTBp")||"—"}</td>
@@ -559,20 +441,14 @@ function renderProspects(){
 }
 
 function renderDocuments(){
-  if(cfg.docs&&cfg.docs.length){
-    document.getElementById("docsList").innerHTML=cfg.docs.map(d=>`<div class="doc-row"><div class="doc-icon">📄</div><div><div class="doc-name">${d.name}</div><div class="doc-meta">${d.date||""}</div></div><a href="${d.url}" target="_blank" class="doc-link">View →</a></div>`).join("");
-  }else{
-    document.getElementById("docsList").innerHTML=`<div class="empty"><div class="empty-icon">📁</div>No documents uploaded yet.<br>Your broker will upload OMs, LOIs, and marketing materials here.</div>`;
-  }
+  document.getElementById("docsList").innerHTML=`<div class="empty"><div class="empty-icon">📁</div>No documents uploaded yet.<br>Your broker will upload OMs, LOIs, and marketing materials here.</div>`;
 }
 
 function renderUpdates(){
   const updates=allActs.filter(a=>{
-    const linked=fv(a,"fldlGyCmsLGiYxU7i");
-    if(!linked||!Array.isArray(linked))return false;
-    const isLinked=linked.some(l=>(l.id||l)===propId);
+    if(!matchesPropId(fv(a,"fldlGyCmsLGiYxU7i")))return false;
     const type=fv(a,"fld3bRwf1ooXKs2Uq")||"";
-    return isLinked && (type==="General Update"||type==="Marketing Update");
+    return type==="General Update"||type==="Marketing Update";
   }).sort((a,b)=>(fv(b,"fldOCdpm5wYututlT")||"").localeCompare(fv(a,"fldOCdpm5wYututlT")||""));
   document.getElementById("updatesList").innerHTML=updates.length?updates.map(u=>{
     const dt=fv(u,"fldOCdpm5wYututlT");
@@ -595,17 +471,11 @@ function switchPage(id,btn){
 
 window.addEventListener("DOMContentLoaded",()=>{
   const params=new URLSearchParams(window.location.search);
-  clientId=params.get("id")||params.get("client")||"";
-  propId=clientId;
-  if(!propId){
-    document.getElementById("loadingScreen").style.display="none";
-    document.getElementById("errorScreen").style.display="block";
-    return;
-  }
+  propId=params.get("id")||params.get("client")||"";
+  if(!propId){ document.getElementById("loadingScreen").style.display="none"; document.getElementById("errorScreen").style.display="block"; return; }
   loadPortal();
 });
 </script>
-
 <div style="background:#001A4C;color:rgba(255,255,255,0.35);text-align:center;padding:10px 2rem;font-size:11px;font-family:'Inter',sans-serif;letter-spacing:0.03em;border-top:1px solid rgba(255,255,255,0.08);">
   Diego Sampson, CCIM · Lic. C-18627 · Sampson Commercial Real Estate · Florida & Puerto Rico
 </div>
