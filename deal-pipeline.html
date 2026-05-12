@@ -468,6 +468,7 @@
             <select id="editStage">
               <option>Prospect</option>
               <option>Active</option>
+              <option>LOI</option>
               <option>Under Negotiation</option>
               <option>Under Contract</option>
             </select>
@@ -562,10 +563,11 @@ const BASE_ID = 'appuE12tiGsHtfLuR';
 const DEALS_TABLE = 'tblfqQb0kbBZm0w51';
 const AT_API = 'https://api.airtable.com/v0';
 
-const STAGES = ['Prospect','Active','Under Negotiation','Under Contract'];
+const STAGES = ['Prospect','Active','LOI','Under Negotiation','Under Contract'];
 const STAGE_COLORS = {
   'Prospect':         { dot: '#94a3b8', bg: '#f1f5f9', text: '#475569' },
   'Active':           { dot: '#3b82f6', bg: '#eff6ff', text: '#1d4ed8' },
+  'LOI':              { dot: '#FF9E59', bg: '#fff7ed', text: '#c2410c' },
   'Under Negotiation':{ dot: '#f59e0b', bg: '#fffbeb', text: '#b45309' },
   'Under Contract':   { dot: '#8b5cf6', bg: '#f5f3ff', text: '#6d28d9' },
   'Closed':           { dot: '#10b981', bg: '#ecfdf5', text: '#065f46' },
