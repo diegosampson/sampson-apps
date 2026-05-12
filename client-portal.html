@@ -237,7 +237,7 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--gray-70
 const BASE_ID = "appuE12tiGsHtfLuR";
 const AT = "https://api.airtable.com/v0";
 const TABLES = { properties:"tble75Hvhs5WVI26t", deals:"tblfqQb0kbBZm0w51", activities:"tblpRnPPxCVrSJsYs", marketing:"tblLYJ5x2NSTV90Ds", leads:"tblEJNkBNzW9YpPoH" };
-const MKT = { property:"fld1cJnwFki0t0zYT", totalViews:"fldWzSy3p2bicZdWO", totalInquiries:"fldEev5VQlzBI2tgh", clasificados:"fld6BQzXkM8MWzU3b", costar:"fldNhlAKjP76MJhb8", tours:"fldY6H2ShZbnJPDI3", outreach:"fldehDyUOXHDLpenn", sign:"fldqHrbFre7NK2k4C", webCalls:"fldrjxv8WqwPX6dWe", lois:"fldGEdf4F1OfRjKD5", leads:"fldpqwFmuHgVEOwMU", notes:"fld3hqPA3sfbkADiU" };
+const MKT = { property:"fld1cJnwFki0t0zYT", totalViews:"fldWzSy3p2bicZdWO", totalInquiries:"fldEev5VQlzBI2tgh", clasificados:"fld6BQzXkM8MWzU3b", crexi:"fldNhlAKjP76MJhb8", outreach:"fldehDyUOXHDLpenn", sign:"fldqHrbFre7NK2k4C", webCalls:"fldrjxv8WqwPX6dWe", lois:"fldGEdf4F1OfRjKD5", leads:"fldpqwFmuHgVEOwMU", tours:"fldY6H2ShZbnJPDI3", notes:"fld3hqPA3sfbkADiU" };
 const PROP_FIELDS = { name:"fldpn9sifUUTV8jmb", address:"flddosmCbsmj7hYuM", city:"fld3qzwSpJASfkZ3r", market:"fldVjprlXVct0Gnz1", type:"fld8ubzef720mR1qa", subtype:"fldUjjdHiMdWEW5jp", status:"fldSnPz8yyqnp8is7", sf:"fldxoT36S88BWYQu8", price:"fldhQ06nbrn8PuoPA", rate:"fldrYx5rxD16LD2qC", private:"fld1JZFgf4oCCKgwA" };
 const TYPE_COLORS = { "Tour / Site Visit":"#10b981","Call":"#3b82f6","Email":"#8b5cf6","LOI Received":"#ef4444","LOI Sent":"#f97316","Lease Executed":"#16a34a","Meeting":"#f59e0b","General Update":"#6b7280","Marketing Update":"#265CFF","Prospect Inquiry":"#8b5cf6" };
 const PROSPECT_STAGES = ["New Lead","Contacted","Interested","Underwriting","Site Visit","LOI","Closed"];
@@ -392,7 +392,7 @@ function renderMarketing(){
   const totalSign=myMkt.reduce((s,m)=>s+(fv(m,MKT.sign)||0),0);
   const totalWeb=myMkt.reduce((s,m)=>s+(fv(m,MKT.webCalls)||0),0);
   const totalClasif=myMkt.reduce((s,m)=>s+(fv(m,MKT.clasificados)||0),0);
-  const totalCostar=myMkt.reduce((s,m)=>s+(fv(m,MKT.costar)||0),0);
+  const totalCrexi=myMkt.reduce((s,m)=>s+(fv(m,MKT.crexi)||0),0);
   const notes=myMkt.map(m=>fv(m,MKT.notes)).filter(Boolean);
 
   if(!myMkt.length){
@@ -416,8 +416,8 @@ function renderMarketing(){
       <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px">Views by Platform</div>
       <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:${notes.length?'20px':'0'}">
         ${totalClasif?`<div><div style="font-size:18px;font-weight:700;color:var(--navy)">${totalClasif}</div><div style="font-size:11px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em">Clasificados</div></div>`:""}
-        ${totalCostar?`<div><div style="font-size:18px;font-weight:700;color:var(--navy)">${totalCostar}</div><div style="font-size:11px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em">CoStar</div></div>`:""}
-        ${(totalViews-totalClasif-totalCostar)>0?`<div><div style="font-size:18px;font-weight:700;color:var(--navy)">${totalViews-totalClasif-totalCostar}</div><div style="font-size:11px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em">Other Platforms</div></div>`:""}
+        ${totalCrexi?`<div><div style="font-size:18px;font-weight:700;color:var(--navy)">${totalCrexi}</div><div style="font-size:11px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em">Crexi</div></div>`:""}
+        ${(totalViews-totalClasif-totalCrexi)>0?`<div><div style="font-size:18px;font-weight:700;color:var(--navy)">${totalViews-totalClasif-totalCrexi}</div><div style="font-size:11px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em">Other Platforms</div></div>`:""}
       </div>
       ${notes.length?`<div style="margin-top:16px;border-top:1px solid var(--gray-200);padding-top:14px"><div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Broker Notes</div>${notes.map(n=>`<div style="font-size:13px;color:var(--gray-700);line-height:1.6;margin-bottom:8px">— ${n}</div>`).join("")}</div>`:""}
     </div>`;
