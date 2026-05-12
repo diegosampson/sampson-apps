@@ -270,9 +270,26 @@ function matchesCfg(text){ if(!text||!cfg)return false; return cfg.keywords.some
 
 async function loadPortal(){
   try{
-    const propRes=await fetch(AT+"/"+BASE_ID+"/"+TABLES.properties+"/"+propId+"?returnFieldsByFieldId=true",{headers:{"Authorization":"Bearer "+pat}});
-    if(!propRes.ok) throw new Error("Property not found");
-    const propRecord=await propRes.json();
+    let propRecord = null;
+
+    // If propId looks like an Airtable record ID (starts with 'rec'), fetch directly
+    if(propId.startsWith('rec')){
+      const propRes=await fetch(AT+"/"+BASE_ID+"/"+TABLES.properties+"/"+propId+"?returnFieldsByFieldId=true",{headers:{"Authorization":"Bearer "+pat}});
+      if(!propRes.ok) throw new Error("Property not found");
+      propRecord=await propRes.json();
+    } else {
+      // Legacy slug — search all properties for a name match
+      const allPropsRes=await fetch(AT+"/"+BASE_ID+"/"+TABLES.properties+"?pageSize=100&returnFieldsByFieldId=true",{headers:{"Authorization":"Bearer "+pat}});
+      if(!allPropsRes.ok) throw new Error("Could not load properties");
+      const allPropsData=await allPropsRes.json();
+      const slug=propId.toLowerCase().replace(/-/g,' ');
+      propRecord=allPropsData.records.find(p=>{
+        const name=(p.fields[PROP_FIELDS.name]||'').toLowerCase();
+        return slug.split(' ').some(w=>w.length>3&&name.includes(w));
+      });
+      if(!propRecord) throw new Error("Property not found for link: "+propId);
+      propId=propRecord.id; // switch to real record ID for all subsequent lookups
+    }
     const pf=propRecord.fields||{};
     if(pf[PROP_FIELDS.private]===true){ document.getElementById("loadingScreen").style.display="none"; document.getElementById("errorScreen").style.display="block"; return; }
 
