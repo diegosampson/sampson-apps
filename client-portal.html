@@ -237,14 +237,14 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--gray-70
 const BASE_ID = "appuE12tiGsHtfLuR";
 const AT = "https://api.airtable.com/v0";
 const TABLES = { properties:"tble75Hvhs5WVI26t", deals:"tblfqQb0kbBZm0w51", activities:"tblpRnPPxCVrSJsYs", marketing:"tblLYJ5x2NSTV90Ds", leads:"tblEJNkBNzW9YpPoH" };
-const MKT = { property:"fld1cJnwFki0t0zYT", month:"fldmUKhAMUstuZAB9", totalViews:"fldWzSy3p2bicZdWO", dl:"fldEjXoXBjaclcYf4", leads:"fldpqwFmuHgVEOwMU", sign:"fldqHrbFre7NK2k4C", outreach:"fldehDyUOXHDLpenn", tours:"fldY6H2ShZbnJPDI3", lois:"fldGEdf4F1OfRjKD5", notes:"fld3hqPA3sfbkADiU" };
+const MKT = { property:"fld1cJnwFki0t0zYT", totalViews:"fldWzSy3p2bicZdWO", totalInquiries:"fldEev5VQlzBI2tgh", clasificados:"fld6BQzXkM8MWzU3b", costar:"fldNhlAKjP76MJhb8", tours:"fldY6H2ShZbnJPDI3", outreach:"fldehDyUOXHDLpenn", sign:"fldqHrbFre7NK2k4C", webCalls:"fldrjxv8WqwPX6dWe", lois:"fldGEdf4F1OfRjKD5", leads:"fldpqwFmuHgVEOwMU", notes:"fld3hqPA3sfbkADiU" };
 const PROP_FIELDS = { name:"fldpn9sifUUTV8jmb", address:"flddosmCbsmj7hYuM", city:"fld3qzwSpJASfkZ3r", market:"fldVjprlXVct0Gnz1", type:"fld8ubzef720mR1qa", subtype:"fldUjjdHiMdWEW5jp", status:"fldSnPz8yyqnp8is7", sf:"fldxoT36S88BWYQu8", price:"fldhQ06nbrn8PuoPA", rate:"fldrYx5rxD16LD2qC", private:"fld1JZFgf4oCCKgwA" };
 const TYPE_COLORS = { "Tour / Site Visit":"#10b981","Call":"#3b82f6","Email":"#8b5cf6","LOI Received":"#ef4444","LOI Sent":"#f97316","Lease Executed":"#16a34a","Meeting":"#f59e0b","General Update":"#6b7280","Marketing Update":"#265CFF","Prospect Inquiry":"#8b5cf6" };
 const PROSPECT_STAGES = ["New Lead","Contacted","Interested","Underwriting","Site Visit","LOI","Closed"];
 const STAGE_COLORS = { "New Lead":["#EFF6FF","#1D4ED8"],"Contacted":["#F0FDF4","#15803D"],"Interested":["#FFFBEB","#B45309"],"Underwriting":["#F5F3FF","#6D28D9"],"Site Visit":["#FFF7ED","#C2410C"],"LOI":["#FEF2F2","#DC2626"],"Closed":["#ECFDF5","#065F46"] };
 
 // Read-only PAT embedded — clients never prompted
-const pat = "pat51n49dXlev1njh" + ".f2a3abf2093008ec0d1cf84bfa617cd983365d813a37f298caddee905a1ac4ca";
+const pat = "pat51n49dXlev1njh" + ".f57ec7893b54b086ac4c0dda9e59c1f36fb2cbb9ae0fe46ac904cb4153e14a0f";
 let propId = "", cfg = null;
 let allProps=[], allDeals=[], allActs=[], allMkt=[], allLeads=[];
 
@@ -333,9 +333,9 @@ function renderDashboard(){
   const myVisits=myActs.filter(a=>fv(a,"fld3bRwf1ooXKs2Uq")==="Tour / Site Visit");
   const myLeads=allLeads.filter(l=>matchesCfg(fv(l,"fldsf8sOdxxcVkF3A")||fv(l,"fldoSNNBoDrMiwh3Y")));
   const myDeals=allDeals.filter(d=>matchesCfg(fv(d,"fldwx2kEFyoudmE4m")));
-  const myMkt=allMkt.filter(m=>{ const l=fv(m,MKT.property); return Array.isArray(l)&&l.some(x=>(x.name||x).toLowerCase().includes(cfg.keywords[0])); });
+  const myMkt=allMkt.filter(m=>{ const l=fv(m,MKT.property); return Array.isArray(l)&&l.some(x=>(x.id||x)===propId||(x.name||x).toLowerCase().includes(cfg.keywords[0])); });
   const totalViews=myMkt.reduce((s,m)=>s+(fv(m,MKT.totalViews)||0),0);
-  const totalDL=myMkt.reduce((s,m)=>s+(fv(m,MKT.dl)||0),0);
+  const totalDL=myMkt.reduce((s,m)=>s+(fv(m,MKT.leads)||0),0);
   const totalLOIs=myMkt.reduce((s,m)=>s+(fv(m,MKT.lois)||0),0);
   const totalOutreach=myMkt.reduce((s,m)=>s+(fv(m,MKT.outreach)||0),0);
   const loiDeals=myDeals.filter(d=>fv(d,"fldnueQJxWwypnCVJ")==="LOI").length;
@@ -383,29 +383,44 @@ function renderActivity(){
 }
 
 function renderMarketing(){
-  const myMkt=allMkt.filter(m=>{ const l=fv(m,MKT.property); return Array.isArray(l)&&l.some(x=>(x.name||x).toLowerCase().includes(cfg.keywords[0])); });
-  myMkt.sort((a,b)=>(fv(b,MKT.month)||"").localeCompare(fv(a,MKT.month)||""));
+  const myMkt=allMkt.filter(m=>{ const l=fv(m,MKT.property); return Array.isArray(l)&&l.some(x=>(x.id||x)===propId||(x.name||x).toLowerCase().includes(cfg.keywords[0])); });
   const totalViews=myMkt.reduce((s,m)=>s+(fv(m,MKT.totalViews)||0),0);
-  const totalDL=myMkt.reduce((s,m)=>s+(fv(m,MKT.dl)||0),0);
-  const totalInq=myMkt.reduce((s,m)=>s+(fv(m,MKT.leads)||0),0);
+  const totalInq=myMkt.reduce((s,m)=>s+(fv(m,MKT.totalInquiries)||fv(m,MKT.leads)||0),0);
   const totalLOIs=myMkt.reduce((s,m)=>s+(fv(m,MKT.lois)||0),0);
+  const totalTours=myMkt.reduce((s,m)=>s+(fv(m,MKT.tours)||0),0);
+  const totalOutreach=myMkt.reduce((s,m)=>s+(fv(m,MKT.outreach)||0),0);
+  const totalSign=myMkt.reduce((s,m)=>s+(fv(m,MKT.sign)||0),0);
+  const totalWeb=myMkt.reduce((s,m)=>s+(fv(m,MKT.webCalls)||0),0);
+  const totalClasif=myMkt.reduce((s,m)=>s+(fv(m,MKT.clasificados)||0),0);
+  const totalCostar=myMkt.reduce((s,m)=>s+(fv(m,MKT.costar)||0),0);
+  const notes=myMkt.map(m=>fv(m,MKT.notes)).filter(Boolean);
+
+  if(!myMkt.length){
+    document.getElementById("mktCards").innerHTML="";
+    document.getElementById("mktMonthly").innerHTML=`<div class="empty"><div class="empty-icon">📊</div>No marketing data available yet.</div>`;
+    return;
+  }
+
   document.getElementById("mktCards").innerHTML=[
-    {v:totalViews,l:"Total Views",sub:"all channels"},
-    {v:totalDL,l:"OM Downloads"},
-    {v:totalInq,l:"Inquiries"},
-    {v:totalLOIs,l:"LOIs Received"},
-  ].map(m=>`<div class="metric-card"><div class="metric-value">${m.v}</div><div class="metric-label">${m.l}</div>${m.sub?`<div class="metric-sub">${m.sub}</div>`:""}</div>`).join("");
-  document.getElementById("mktMonthly").innerHTML=myMkt.length?`<div style="padding:0 18px">${myMkt.map(m=>`
-    <div class="mkt-month-row">
-      <div class="mkt-month-label">${fmtMonth(fv(m,MKT.month))}</div>
-      <div class="mkt-month-stat"><div class="mkt-month-stat-num">${fv(m,MKT.totalViews)||0}</div><div class="mkt-month-stat-lbl">Views</div></div>
-      <div class="mkt-month-stat"><div class="mkt-month-stat-num">${fv(m,MKT.dl)||0}</div><div class="mkt-month-stat-lbl">Downloads</div></div>
-      <div class="mkt-month-stat"><div class="mkt-month-stat-num">${fv(m,MKT.leads)||0}</div><div class="mkt-month-stat-lbl">Inquiries</div></div>
-      <div class="mkt-month-stat"><div class="mkt-month-stat-num">${fv(m,MKT.outreach)||0}</div><div class="mkt-month-stat-lbl">Outreach</div></div>
-      <div class="mkt-month-stat"><div class="mkt-month-stat-num">${fv(m,MKT.tours)||0}</div><div class="mkt-month-stat-lbl">Tours</div></div>
-      <div class="mkt-month-stat"><div class="mkt-month-stat-num">${fv(m,MKT.lois)||0}</div><div class="mkt-month-stat-lbl">LOIs</div></div>
-      ${fv(m,MKT.notes)?`<div style="font-size:11px;color:var(--gray-500);font-style:italic;margin-left:8px">${fv(m,MKT.notes)}</div>`:""}
-    </div>`).join("")}</div>`:`<div class="empty"><div class="empty-icon">📊</div>No marketing data available yet.</div>`;
+    {icon:"👁",v:totalViews,l:"Total Listing Views"},
+    {icon:"📥",v:totalInq,l:"Total Inquiries"},
+    {icon:"📄",v:totalLOIs,l:"LOIs Received"},
+    {icon:"🚶",v:totalTours,l:"Site Visits / Tours"},
+    {icon:"📞",v:totalOutreach,l:"Direct Outreach"},
+    {icon:"🪧",v:totalSign,l:"Sign Calls"},
+    {icon:"🌐",v:totalWeb,l:"Website / Web Calls"},
+  ].map(m=>`<div class="metric-card"><div class="metric-icon">${m.icon}</div><div class="metric-value">${m.v||0}</div><div class="metric-label">${m.l}</div></div>`).join("");
+
+  document.getElementById("mktMonthly").innerHTML=`
+    <div style="padding:16px 18px">
+      <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px">Views by Platform</div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:${notes.length?'20px':'0'}">
+        ${totalClasif?`<div><div style="font-size:18px;font-weight:700;color:var(--navy)">${totalClasif}</div><div style="font-size:11px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em">Clasificados</div></div>`:""}
+        ${totalCostar?`<div><div style="font-size:18px;font-weight:700;color:var(--navy)">${totalCostar}</div><div style="font-size:11px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em">CoStar</div></div>`:""}
+        ${(totalViews-totalClasif-totalCostar)>0?`<div><div style="font-size:18px;font-weight:700;color:var(--navy)">${totalViews-totalClasif-totalCostar}</div><div style="font-size:11px;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em">Other Platforms</div></div>`:""}
+      </div>
+      ${notes.length?`<div style="margin-top:16px;border-top:1px solid var(--gray-200);padding-top:14px"><div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Broker Notes</div>${notes.map(n=>`<div style="font-size:13px;color:var(--gray-700);line-height:1.6;margin-bottom:8px">— ${n}</div>`).join("")}</div>`:""}
+    </div>`;
 }
 
 function renderSiteVisits(){
