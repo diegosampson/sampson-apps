@@ -167,16 +167,22 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--gray-70
     <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
       <div class="page-title">Dashboard</div>
-      <div class="page-sub">Portfolio snapshot across all active assignments</div>
-      <div class="cards-grid" id="dashCards">
-        <div class="metric-card"><div class="metric-label">Properties</div><div class="metric-value">—</div></div>
-        <div class="metric-card"><div class="metric-label">Active Deals</div><div class="metric-value">—</div></div>
-        <div class="metric-card"><div class="metric-label">Total Leads</div><div class="metric-value">—</div></div>
-        <div class="metric-card"><div class="metric-label">Total Views</div><div class="metric-value">—</div></div>
-        <div class="metric-card"><div class="metric-label">Client Portals</div><div class="metric-value">—</div></div>
+      <div class="page-sub">Portfolio snapshot &mdash; <span id="dashLastSync" style="color:var(--gray-500)"></span></div>
+      <div class="cards-grid" id="dashCards"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1rem">
+        <div class="card">
+          <div class="card-header"><div class="card-title">DEALS BY STAGE</div></div>
+          <div class="card-body" id="dashStages"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">STALE DEALS</div><span style="font-size:11px;color:var(--gray-500)">No update 14+ days</span></div>
+          <div class="card-body" id="dashStale"></div>
+        </div>
       </div>
-      <div class="section-head">Priority Assignments</div>
-      <div id="dashProperties"><div class="loading"><div class="spinner"></div></div></div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">RECENT ACTIVITY</div><span style="font-size:11px;color:var(--gray-500)">Last 8 entries across all properties</span></div>
+        <div id="dashActivity" style="padding:0 16px 16px"></div>
+      </div>
     </div>
 
     <!-- CLIENT PORTALS -->
@@ -379,41 +385,69 @@ async function syncAll(){
 }
 
 function renderDashboard(){
+  const STAGES=['Prospect','Active','LOI','Under Negotiation','Under Contract'];
+  const STAGE_COLORS={'Prospect':'#94a3b8','Active':'#3b82f6','LOI':'#FF9E59','Under Negotiation':'#f59e0b','Under Contract':'#8b5cf6'};
   const activeDeals=allDeals.filter(d=>!['Closed','Dead'].includes(fv(d,'fldnueQJxWwypnCVJ')));
   const activeProps=allProperties.filter(p=>fv(p,'fldSnPz8yyqnp8is7')==='Active'||fv(p,'fldSnPz8yyqnp8is7')==='Listing');
   const totalViews=allMarketing.reduce((s,m)=>s+(fv(m,MKT_F.totalViews)||0),0);
   const portals=allProperties.filter(p=>!fv(p,'fld1JZFgf4oCCKgwA')).length;
+  const lois=activeDeals.filter(d=>fv(d,'fldnueQJxWwypnCVJ')==='LOI').length;
+  const totalComm=allDeals.filter(d=>fv(d,'fldnueQJxWwypnCVJ')==='Closed').reduce((s,d)=>s+(fv(d,'fld0I5PcXaTnv5QCc')||0),0);
+
+  document.getElementById('dashLastSync').textContent='Updated '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+
   document.getElementById('dashCards').innerHTML=[
     {l:'Active Properties',v:activeProps.length,s:'In Airtable'},
     {l:'Active Deals',v:activeDeals.length,s:'Pipeline'},
-    {l:'Total Leads',v:allLeads.length,s:'Across all listings'},
+    {l:'LOIs',v:lois,s:'In negotiation'},
     {l:'Total Views',v:totalViews,s:'All platforms'},
-    {l:'Client Portals',v:portals,s:'Live portals'},
-  ].map(c=>`<div class="metric-card"><div class="metric-label">${c.l}</div><div class="metric-value">${c.v}</div><div class="metric-sub">${c.s}</div></div>`).join('');
+    {l:'Earned Commission',v:totalComm?'$'+Number(totalComm).toLocaleString('en-US',{maximumFractionDigits:0}):'$0',s:'Closed deals'},
+  ].map(c=>`<div class="metric-card"><div class="metric-label">${c.l}</div><div class="metric-value" style="font-size:${String(c.v).length>6?'18px':'26px'}">${c.v}</div><div class="metric-sub">${c.s}</div></div>`).join('');
 
-  document.getElementById('dashProperties').innerHTML=PRIORITY_PROPS.map(key=>{
-    const prop=allProperties.find(p=>(fv(p,'fldpn9sifUUTV8jmb')||'').toLowerCase().includes(key1(key)));
-    const color=PRIORITY_COLORS[key];
-    const deals=allDeals.filter(d=>(fv(d,'fldwx2kEFyoudmE4m')||'').toLowerCase().includes(key1(key)));
-    const leads=allLeads.filter(l=>((fv(l,'fldoSNNBoDrMiwh3Y')||'')+(fv(l,'fldsf8sOdxxcVkF3A')||'')).toLowerCase().includes(key1(key)));
-    const portalUrl=getPortalUrl(prop);
-    return `<div class="prop-card" style="border-left:4px solid ${color}">
-      <div style="flex:1">
-        <div class="prop-name">${PRIORITY_LABELS[key]}</div>
-        <div class="prop-meta">${prop?(fv(prop,'fld3qzwSpJASfkZ3r')||'')+(fv(prop,'fld8ubzef720mR1qa')?' · '+fv(prop,'fld8ubzef720mR1qa'):''):'Puerto Rico'}</div>
-        <div class="prop-badges">
-          <span class="badge badge-pr">Puerto Rico</span>
-          <span class="badge badge-type">${deals.length} deal${deals.length!==1?'s':''}</span>
-          <span class="badge badge-type">${leads.length} lead${leads.length!==1?'s':''}</span>
-        </div>
-        <div class="prop-actions">
-          <button class="btn-link primary" onclick="showPropertyDetail('${key}',document.getElementById('nav-${key}'))">View Detail →</button>
-          ${portalUrl?`<button class="btn-link" onclick="navigator.clipboard.writeText('${portalUrl}').then(()=>showToast('Portal link copied ✓'))">📋 Copy Portal Link</button><a href="${portalUrl}" target="_blank" class="btn-link">👁 Open Portal</a>`:''}
-        </div>
+  // Deals by stage
+  document.getElementById('dashStages').innerHTML=STAGES.map(stage=>{
+    const count=activeDeals.filter(d=>fv(d,'fldnueQJxWwypnCVJ')===stage).length;
+    const color=STAGE_COLORS[stage]||'#94a3b8';
+    const pct=activeDeals.length?Math.round(count/activeDeals.length*100):0;
+    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="width:10px;height:10px;border-radius:50%;background:${color};flex-shrink:0"></div>
+      <div style="flex:1;font-size:13px;color:var(--gray-700)">${stage}</div>
+      <div style="font-size:13px;font-weight:600;color:var(--navy)">${count}</div>
+      <div style="width:80px;height:6px;background:var(--gray-200);border-radius:3px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:${color};border-radius:3px"></div>
       </div>
-      ${prop?`<div style="text-align:right"><div class="prop-price">${fmt$(fv(prop,'fldhQ06nbrn8PuoPA'))}</div><div class="prop-sf">${fv(prop,'fldxoT36S88BWYQu8')?Number(fv(prop,'fldxoT36S88BWYQu8')).toLocaleString()+' SF':''}</div></div>`:''}
     </div>`;
-  }).join('');
+  }).join('')+(activeDeals.length===0?'<div class="empty-state">No active deals</div>':'');
+
+  // Stale deals — no activity keyword match in last 14 days
+  const cutoff=new Date(Date.now()-14*24*60*60*1000);
+  const stale=activeDeals.filter(d=>{
+    const dealName=(fv(d,'fldwx2kEFyoudmE4m')||'').toLowerCase();
+    const lastAct=allActivities.filter(a=>(fv(a,'fldTCNZaWYNgVhYjb')||'').toLowerCase().includes(dealName.split(' ')[0]))
+      .map(a=>new Date(fv(a,'fldOCdpm5wYututlT')||0)).sort((a,b)=>b-a)[0];
+    return !lastAct||lastAct<cutoff;
+  });
+  document.getElementById('dashStale').innerHTML=stale.length?stale.map(d=>{
+    const stage=fv(d,'fldnueQJxWwypnCVJ')||'—';
+    const color=STAGE_COLORS[stage]||'#94a3b8';
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:8px 10px;background:var(--gray-100);border-radius:8px;border-left:3px solid ${color}">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:500;color:var(--navy)">${fv(d,'fldwx2kEFyoudmE4m')||'—'}</div>
+        <div style="font-size:11px;color:var(--gray-500)">${stage}</div>
+      </div>
+      <div style="font-size:11px;color:#dc2626;font-weight:600">Stale</div>
+    </div>`;
+  }).join(''):`<div class="empty-state" style="padding:1rem;font-size:13px">All deals have recent activity</div>`;
+
+  // Recent activity
+  const recent=[...allActivities].sort((a,b)=>new Date(fv(b,'fldOCdpm5wYututlT')||0)-new Date(fv(a,'fldOCdpm5wYututlT')||0)).slice(0,8);
+  const TYPE_COLORS={'Tour / Site Visit':'#10b981','Call':'#3b82f6','Email':'#8b5cf6','LOI Received':'#ef4444','LOI Sent':'#f97316','Lease Executed':'#16a34a','Meeting':'#f59e0b','General Update':'#6b7280','Marketing Update':'#265CFF','Prospect Inquiry':'#8b5cf6'};
+  document.getElementById('dashActivity').innerHTML=recent.length?`<table class="data-table"><thead><tr><th>Note</th><th>Type</th><th>Date</th></tr></thead><tbody>${recent.map(a=>{
+    const type=fv(a,'fld3bRwf1ooXKs2Uq')||'Update';
+    const color=TYPE_COLORS[type]||'#6b7280';
+    const dt=fv(a,'fldOCdpm5wYututlT');
+    return `<tr><td style="font-size:13px">${fv(a,'fldTCNZaWYNgVhYjb')||'—'}</td><td><span style="font-size:11px;font-weight:600;color:${color}">${type}</span></td><td style="font-size:12px;color:var(--gray-500);white-space:nowrap">${dt?new Date(dt).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—'}</td></tr>`;
+  }).join('')}</tbody></table>`:`<div class="empty-state">No activity logged yet.</div>`;
 }
 
 function getPortalBase(){
